@@ -6,11 +6,11 @@ variable "region" {}
 variable "fingerprint" {}
 
 variable "enable_autoscaler_addon" {
-  default = false
+  default = true
 }
 
 variable "autoscaler_authtype_workload" {
-  default = false
+  default = true
 }
 
 variable "kubernetes_version" {

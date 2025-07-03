@@ -1,6 +1,6 @@
 # FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
 
-## LESSON 8 - Creating OKE Cluster with image taken from OCI Registry (OCIR)
+## LESSON 9 - Creating OKE Cluster with image taken from OCI Registry (OCIR)
 
 In this lesson, we focus on the creation of an OKE (Oracle Kubernetes Engine) Cluster utilizing images stored in the OCI Registry (OCIR). This tutorial aims to provide a detailed walkthrough for leveraging the Oracle Cloud Infrastructure Registry, a managed Docker registry service, for storing and managing your Docker images. Throughout this lesson, we will guide you through the process of configuring your OKE cluster to pull application images directly from OCIR, highlighting the seamless integration between OCI services and Kubernetes deployments.
 

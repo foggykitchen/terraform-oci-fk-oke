@@ -46,4 +46,10 @@ In this lesson, we take a comprehensive look at creating an OKE (Oracle Kubernet
 
 In this lesson, we focus on the creation of an OKE (Oracle Kubernetes Engine) Cluster utilizing images stored in the OCI Registry (OCIR). This tutorial aims to provide a detailed walkthrough for leveraging the Oracle Cloud Infrastructure Registry, a managed Docker registry service, for storing and managing your Docker images. Throughout this lesson, we will guide you through the process of configuring your OKE cluster to pull application images directly from OCIR, highlighting the seamless integration between OCI services and Kubernetes deployments.
 
+[Lesson 10: Creating OKE Basic Cluster with OCI Logging](lesson10_oke_logging)
+
+In this lesson, we'll guide you through the process of setting up a Basic OKE Cluster. This type of cluster supports all essential features offered by Kubernetes and the Container Engine for Kubernetes, but it lacks the advanced functionalities available in enhanced clusters, like virtual nodes and cluster add-on management. Although basic clusters are equipped with a service level objective (SLO), they do not come with a financially-backed service level agreement (SLA).
+
+Additionally, we’ll show you how to enable OCI Logging for your Kubernetes control plane and workloads. By integrating logging capabilities during the provisioning process, you'll gain better observability into your cluster's behavior, including API server events, node-level messages, and application logs.
+
 
