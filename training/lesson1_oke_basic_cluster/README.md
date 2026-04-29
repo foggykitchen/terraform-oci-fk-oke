@@ -13,14 +13,15 @@ It is intentionally small. The goal is to establish the baseline architecture fo
 This deployment plans to create:
 
 - A new OCI VCN created by `terraform-oci-fk-vcn`
-- A cluster API endpoint subnet
-- A load balancer subnet
-- A node pool subnet with worker nodes
-- An Internet Gateway, Service Gateway, and shared route table
+- A cluster API endpoint subnet created by `terraform-oci-fk-vcn`
+- A load balancer subnet created by `terraform-oci-fk-vcn`
+- A node pool subnet created by `terraform-oci-fk-vcn`, with worker nodes created by `terraform-oci-fk-oke`
+- An Internet Gateway, Service Gateway, and shared route table created by `terraform-oci-fk-vcn`
 - Security lists for the cluster networking
 - A basic OKE cluster created by `terraform-oci-fk-oke`
 
 The network layer is created first by `terraform-oci-fk-vcn`.
+That includes the VCN, subnets, gateways, route table, and security lists.
 The OKE module then consumes the resulting subnet and VCN IDs through `use_existing_vcn = true`.
 
 ---
@@ -114,6 +115,7 @@ The important settings are:
 
 - `terraform-oci-fk-vcn` creates the VCN, gateways, route table, security lists, and the three OKE-facing subnets.
 - `use_existing_vcn = true` makes `terraform-oci-fk-oke` consume those network resources instead of creating its own.
+- `vcn_id`, `api_endpoint_subnet_id`, `lb_subnet_id`, and `nodepool_subnet_id` are injected from `terraform-oci-fk-vcn` outputs into `terraform-oci-fk-oke`.
 - `cluster_type = "basic"` keeps the lesson on the basic OKE path.
 - `is_api_endpoint_subnet_public = true`, `is_lb_subnet_public = true`, and `is_nodepool_subnet_public = true` keep the example reachable in a simple public-network setup.
 
