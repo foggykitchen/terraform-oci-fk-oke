@@ -6,6 +6,8 @@ module "fk-vcn" {
   vcn_cidr_blocks  = ["10.20.0.0/16"]
 
   create_internet_gateway = true
+  create_nat_gateway      = true
+  create_service_gateway  = true
 
   route_tables = {
     public = {
@@ -14,6 +16,20 @@ module "fk-vcn" {
           destination        = "0.0.0.0/0"
           destination_type   = "CIDR_BLOCK"
           network_entity_key = "internet_gateway"
+        }
+      ]
+    }
+    private = {
+      route_rules = [
+        {
+          destination        = "0.0.0.0/0"
+          destination_type   = "CIDR_BLOCK"
+          network_entity_key = "nat_gateway"
+        },
+        {
+          destination        = "all-services"
+          destination_type   = "SERVICE_CIDR_BLOCK"
+          network_entity_key = "service_gateway"
         }
       ]
     }
@@ -107,6 +123,14 @@ module "fk-vcn" {
         },
         {
           protocol    = "6"
+          destination = "0.0.0.0/0"
+          tcp_options = {
+            min = 443
+            max = 443
+          }
+        },
+        {
+          protocol    = "6"
           destination = "10.20.10.0/28"
           tcp_options = {
             min = 6443
@@ -120,10 +144,6 @@ module "fk-vcn" {
             min = 12250
             max = 12250
           }
-        },
-        {
-          protocol    = "6"
-          destination = "0.0.0.0/0"
         }
       ]
       ingress_rules = [
@@ -145,11 +165,7 @@ module "fk-vcn" {
         },
         {
           protocol = "6"
-          source   = "0.0.0.0/0"
-          tcp_options = {
-            min = 22
-            max = 22
-          }
+          source   = "10.20.20.0/24"
         }
       ]
     }
@@ -172,8 +188,9 @@ module "fk-vcn" {
     nodes = {
       display_name               = "foggykitchen-oke-nodes-subnet"
       cidr_block                 = "10.20.30.0/24"
-      route_table_key            = "public"
-      prohibit_public_ip_on_vnic = false
+      route_table_key            = "private"
+      prohibit_internet_ingress  = true
+      prohibit_public_ip_on_vnic = true
       security_list_keys         = ["oke_nodes"]
     }
   }
