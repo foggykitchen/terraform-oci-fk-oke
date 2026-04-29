@@ -17,7 +17,7 @@ This deployment plans to create:
 - A load balancer subnet created by `terraform-oci-fk-vcn`
 - A node pool subnet created by `terraform-oci-fk-vcn`, with worker nodes created by `terraform-oci-fk-oke`
 - An Internet Gateway, Service Gateway, and shared route table created by `terraform-oci-fk-vcn`
-- Security lists for the cluster networking
+- Security lists for the cluster networking created by `terraform-oci-fk-vcn`
 - A basic OKE cluster created by `terraform-oci-fk-oke`
 
 The network layer is created first by `terraform-oci-fk-vcn`.
@@ -38,7 +38,7 @@ The following screenshot shows the created OKE resources in OCI Console:
 
 The lesson is split into two reusable modules:
 
-- [networking.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson1_oke_basic_cluster/networking.tf) creates the VCN layer with `terraform-oci-fk-vcn`.
+- [networking.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson1_oke_basic_cluster/networking.tf) creates the VCN layer with `terraform-oci-fk-vcn`, including subnets, gateways, route tables, and security lists.
 - [oke.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson1_oke_basic_cluster/oke.tf) creates the cluster with `terraform-oci-fk-oke` and injects the subnet and VCN IDs from the network module.
 
 ```hcl
@@ -116,6 +116,7 @@ The important settings are:
 - `terraform-oci-fk-vcn` creates the VCN, gateways, route table, security lists, and the three OKE-facing subnets.
 - `use_existing_vcn = true` makes `terraform-oci-fk-oke` consume those network resources instead of creating its own.
 - `vcn_id`, `api_endpoint_subnet_id`, `lb_subnet_id`, and `nodepool_subnet_id` are injected from `terraform-oci-fk-vcn` outputs into `terraform-oci-fk-oke`.
+- `security_list_keys` in `terraform-oci-fk-vcn` attach the `oke_api` and `oke_nodes` security lists to the relevant subnets before OKE is created.
 - `cluster_type = "basic"` keeps the lesson on the basic OKE path.
 - `is_api_endpoint_subnet_public = true`, `is_lb_subnet_public = true`, and `is_nodepool_subnet_public = true` keep the example reachable in a simple public-network setup.
 
