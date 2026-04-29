@@ -1,8 +1,6 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 02: Enhanced OKE Cluster
 
-## LESSON 2 - Creating OKE Enhanced Cluster
-
-In this tutorial, we will walk you through the configuration of an Enhanced OKE (Oracle Kubernetes Engine) Cluster. This advanced cluster configuration extends beyond the core capabilities offered by Kubernetes and the Container Engine for Kubernetes, incorporating premium features such as virtual nodes, cluster add-on management, and autoscaling. Unlike basic clusters, enhanced clusters are designed with a service level objective (SLO) and are supported by a financially-backed service level agreement (SLA), ensuring higher reliability and performance for your mission-critical applications. Enhanced clusters are ideal for users requiring advanced management, scalability, and reliability features directly integrated into their Kubernetes environment.
+This lesson shows the enhanced OKE cluster mode and the reusable module pieces that support it. It builds on the basic cluster example and introduces the higher-level cluster capabilities used in the rest of the course.
 
 ![](terraform-oci-fk-oke-lesson2.png)
 
@@ -439,7 +437,7 @@ Destroy complete! Resources: 16 destroyed.
 This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 

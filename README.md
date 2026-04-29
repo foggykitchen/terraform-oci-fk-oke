@@ -1,99 +1,237 @@
 # terraform-oci-fk-oke
 
-These is Terraform module that deploys [Container Engine for Kubernetes (OKE)](https://docs.oracle.com/en-us/iaas/Content/ContEng/home.htm) on [Oracle Cloud Infrastructure (OCI)](https://cloud.oracle.com/en_US/cloud-infrastructure).
+This repository contains a reusable Terraform module and progressive training examples for deploying Oracle Container Engine for Kubernetes (OKE) on Oracle Cloud Infrastructure (OCI).
 
-## About
-Oracle Cloud Infrastructure Container Engine for Kubernetes is a fully-managed, scalable, and highly available service that you can use to deploy your containerized applications to the cloud. Use Container Engine for Kubernetes (sometimes abbreviated to just OKE) when your development team wants to reliably build, deploy, and manage cloud-native applications. 
+It is part of the FoggyKitchen training ecosystem and is meant to stay composable: the root module focuses on cluster infrastructure, while the `training/` folder contains self-contained lesson examples.
 
-## Prerequisites
-1. Download and install Terraform (v1.0 or later)
-2. Download and install the OCI Terraform Provider (v4.4.0 or later)
-3. Export OCI credentials. (this refer to the https://github.com/oracle/terraform-provider-oci )
+---
 
+## Purpose
 
-## What's a Module?
-A Module is a canonical, reusable, best-practices definition for how to run a single piece of infrastructure, such as a database or server cluster. Each Module is created using Terraform, and includes automated tests, examples, and documentation. It is maintained both by the open source community and companies that provide commercial support.
-Instead of figuring out the details of how to run a piece of infrastructure from scratch, you can reuse existing code that has been proven in production. And instead of maintaining all that infrastructure code yourself, you can leverage the work of the Module community to pick up infrastructure improvements through a version number bump.
+The goal of this module is to provide a clear, reusable reference implementation for OKE:
 
-## How to use this Module
-Each Module has the following folder structure:
-* [root](): This folder contains a root module.
-* [training](): This folder contains self-study training how to use the module:
-  - [Lesson 1: Creating OKE Basic Cluster](training/lesson1_oke_basic_cluster): In this lesson, we'll guide you through the process of setting up a Basic OKE Cluster. This type of cluster supports all essential features offered by Kubernetes and the Container Engine for Kubernetes, but it lacks the advanced functionalities available in enhanced clusters, like virtual nodes and cluster add-on management. Although basic clusters are equipped with a service level objective (SLO), they do not come with a financially-backed service level agreement (SLA). 
-  - [Lesson 2: Creating OKE Enhanced Cluster](training/lesson2_oke_enhanced_cluster): In this tutorial, we will walk you through the configuration of an Enhanced OKE (Oracle Kubernetes Engine) Cluster. This advanced cluster configuration extends beyond the core capabilities offered by Kubernetes and the Container Engine for Kubernetes, incorporating premium features such as virtual nodes, cluster add-on management, and autoscaling. Unlike basic clusters, enhanced clusters are designed with a service level objective (SLO) and are supported by a financially-backed service level agreement (SLA), ensuring higher reliability and performance for your mission-critical applications. Enhanced clusters are ideal for users requiring advanced management, scalability, and reliability features directly integrated into their Kubernetes environment.
-  - [Lesson 3: Creating OKE Enhanced Cluster with OKE Add-Ons](training/lesson3_oke_addons): In this lesson, we delve into the creation of an OKE Enhanced Cluster with OKE Add-Ons, providing a comprehensive tutorial on how to leverage the advanced features of Oracle Kubernetes Engine (OKE). This lesson focuses on the enhanced cluster setup, emphasizing the integration of OKE Add-Ons for a robust, scalable, and efficient Kubernetes environment. 
-  - [Lesson 4: Creating OKE Enhanced Cluster with Virtual NodePool](training/lesson4_oke_virtual_nodes): In this lesson, we focus on setting up an OKE Enhanced Cluster with a Virtual NodePool. Virtual NodePools is a feature that enables on-demand scalability and efficient resource management without the need for physical node management. 
-  - [Lesson 5: Creating OKE Enhanced Cluster with Autoscaler OKE Add-on](training/lesson5_oke_autoscaler): In this lesson we explore the creation of an OKE Enhanced Cluster with the Autoscaler as an OKE Add-on, providing a step-by-step tutorial to harness the power of automatic scaling within your Oracle Kubernetes Engine (OKE) deployments. 
-  - [Lesson 6: Creating OKE Cluster with OCI LoadBalancer as Kubernetes Servicee](training/lesson6_oke_lb): In this lesson, we delve into the process of creating an OKE (Oracle Kubernetes Engine) Cluster with OCI (Oracle Cloud Infrastructure) Load Balancer as a Kubernetes Service, offering a detailed guide to integrating robust load balancing capabilities within your Kubernetes deployments. This lesson focuses on the strategic implementation of OCI Load Balancer as an integral service within your OKE cluster, aiming to enhance the distribution of traffic across your applications for improved availability and performance.
-  - [Lesson 7: Creating OKE Cluster with OCI Block Volume as Kubernetes PVC](training/lesson7_oke_block_volume_pvc): In this lesson, we guide you through the creation of an OKE (Oracle Kubernetes Engine) Cluster with OCI (Oracle Cloud Infrastructure) Block Volume as Kubernetes Persistent Volume Claims (PVCs), providing a comprehensive tutorial on enhancing your Kubernetes deployments with durable and scalable storage solutions. This lesson is specifically designed to teach you how to leverage OCI Block Volumes for persistent storage needs within your Kubernetes environment, ensuring data persistence across pod reassignments and restarts. We will cover the intricacies of integrating OCI Block Volumes as PVCs, including provisioning, attaching, and managing block storage volumes to meet the dynamic storage requirements of your applications.
-  - [Lesson 8: Creating OKE Cluster with OCI File Storage Service as Kubernetes PVC](training/lesson8_oke_fss_pvc): In this lesson, we take a comprehensive look at creating an OKE (Oracle Kubernetes Engine) Cluster with OCI (Oracle Cloud Infrastructure) File Storage Service as Kubernetes Persistent Volume Claims (PVCs). This tutorial is aimed at equipping you with the knowledge to incorporate OCI File Storage Service into your Kubernetes deployments, offering a scalable, shared storage solution that supports the concurrent access needs of your applications. Throughout this lesson, we will dive into the process of setting up and integrating OCI File Storage Service as PVCs, demonstrating how to provision and mount shared file systems within your Kubernetes environment. The focus will be on the seamless management of file storage, enabling applications to efficiently share data across multiple pods and nodes.
-  - [Lesson 9: Creating OKE Cluster with image taken from OCI Registry](training/lesson9_oke_ocir): In this lesson, we focus on the creation of an OKE (Oracle Kubernetes Engine) Cluster utilizing images stored in the OCI Registry (OCIR). This tutorial aims to provide a detailed walkthrough for leveraging the Oracle Cloud Infrastructure Registry, a managed Docker registry service, for storing and managing your Docker images. Throughout this lesson, we will guide you through the process of configuring your OKE cluster to pull application images directly from OCIR, highlighting the seamless integration between OCI services and Kubernetes deployments.
-  - [Lesson 10: Creating OKE Basic Cluster with OCI Logging](training/lesson10_oke_logging): In this lesson, we'll guide you through the process of setting up a Basic OKE Cluster. This type of cluster supports all essential features offered by Kubernetes and the Container Engine for Kubernetes, but it lacks the advanced functionalities available in enhanced clusters, like virtual nodes and cluster add-on management. Although basic clusters are equipped with a service level objective (SLO), they do not come with a financially-backed service level agreement (SLA). Additionally, we’ll show you how to enable OCI Logging for your Kubernetes control plane and workloads. By integrating logging capabilities during the provisioning process, you'll gain better observability into your cluster's behavior, including API server events, node-level messages, and application logs.
+- OKE cluster provisioning
+- Basic and enhanced cluster modes
+- Optional VCN creation or integration with an existing VCN
+- Optional subnet creation for the cluster endpoint, node pool, and load balancer
+- VCN-native pod networking for node pools
+- Virtual node pool support
+- OKE add-ons support
+- Cluster autoscaler add-on and supporting node pools
+- SSH key handling for node pool access
 
-To deploy OKE using this Module with minimal effort use this:
+This is not a full landing zone module. Networking, cluster settings, and add-ons stay explicit so the module can be reused in different training or project scenarios.
 
-```hcl
-module "fk-oke" {
-  source                        = "github.com/mlinxfeld/terraform-oci-fk-oke"
-  tenancy_ocid                  = var.tenancy_ocid      # Our tenancy OCID     
-  compartment_ocid              = var.compartment_ocid  # Compartment OCID where OKE and network will be deployed
-  cluster_type                  = "basic"               # Basic cluster
-  use_existing_vcn              = false                 # Module itself will create all necessary network resources
-  is_api_endpoint_subnet_public = true                  # OKE API Endpoint will be public (Internet facing)
-  is_lb_subnet_public           = true                  # OKE LoadBalanacer will be public (Internet facing)
-  is_nodepool_subnet_public     = true                  # OKE NodePool will be public (Internet facing)
-}
+---
 
+## What The Module Does
+
+Depending on the configuration, the module can create:
+
+- OCI VCN
+- Service gateway, NAT gateway, route tables, and internet gateway
+- Cluster endpoint subnet
+- Load balancer subnet
+- Node pool subnet
+- OKE cluster
+- Regular node pools
+- Virtual node pool
+- Cluster add-ons
+- Autoscaler node pool and autoscaler add-on
+
+The module intentionally does not create:
+
+- Application workloads
+- Kubernetes manifests
+- Persistent volume claims or workload-specific storage resources
+- Bastion hosts
+- External observability backends outside the module API
+
+Those concerns belong in dedicated examples or separate modules.
+
+---
+
+## Repository Structure
+
+```bash
+terraform-oci-fk-oke/
+├── README.md
+├── LICENSE
+├── provider.tf
+├── datasources.tf
+├── locals.tf
+├── network.tf
+├── oke_cluster.tf
+├── oke_node_pools.tf
+├── oke_virtual_node_pool.tf
+├── oke_autoscaler_node_pools.tf
+├── oke_addons.tf
+├── outputs.tf
+├── variables.tf
+└── training/
+    ├── README.md
+    ├── lesson1_oke_basic_cluster/
+    ├── lesson2_oke_enhanced_cluster/
+    ├── lesson3_oke_addons/
+    ├── lesson4_oke_virtual_nodes/
+    ├── lesson5_oke_autoscaler/
+    ├── lesson6_oke_lb/
+    ├── lesson7_oke_block_volume_pvc/
+    ├── lesson8_oke_fss_pvc/
+    ├── lesson9_oke_ocir/
+    └── lesson10_oke_logging/
 ```
 
-Argument | Description
---- | ---
-compartment_ocid | Compartment's OCID where OKE will be created
-ssh_authorized_keys | Public SSH key to be included in the ~/.ssh/authorized_keys file for the default user on the instance
-ssh_private_key | The private key to access instance
-use_existing_vcn | If you want to inject already exisitng VCN then you need to set the value to TRUE.
-use_existing_nsg | If you want to inject already exisitng NSG then you need to set the value to TRUE.
-vcn_cidr | If use_existing_vcn is set to FALSE then you can define VCN CIDR block and then it will used to create VCN within the module.
-vcn_id | If use_existing_vcn is set to TRUE then you can pass VCN OCID and module will use it to create OKE Cluster.
-node_subnet_id | If use_existing_vcn is set to TRUE then you can pass NodePool Subnet OCID and module will use it to create OKE NodePool.
-nodepool_subnet_cidr | If use_existing_vcn is set to FALSE then you can define NodePool CIDR block and then it will used to create NodePool within the module.
-lb_subnet_id | If use_existing_vcn is set to TRUE then you can pass LoadBalancer Subnet OCID and module will use it to define service_lb_subnet_ids.
-lb_subnet_cidr | If use_existing_vcn is set to FALSE then you can define LoadBalancer CIDR block and then it will used to create service_lb_subnet_ids within the module.
-api_endpoint_subnet_id | If use_existing_vcn is set to TRUE then you can pass API EndPoint Subnet OCID and module will use it to define endpoint_config.
-api_endpoint_subnet_cidr | If use_existing_vcn is set to FALSE then you can define API EndPoint CIDR block and then it will used to create endpoint_config within the module.
-api_endpoint_nsg_ids | If use_existing_vcn is set to TRUE then you can pass API EndPoint Network Security Groups OCID and module will use it to define endpoint_config.
-oci_vcn_ip_native | If you want to enable POD native networking (PODs associated with VCN/Subnet), then you need to turn the value to TRUE.
-pod_subnet_id | If use_existing_vcn is set to TRUE and oci_vcn_ip_native is set to TRUE then you can pass POD Subnet OCID and module will associate it with each and every POD in OKE.
-max_pods_per_node | If oci_vcn_ip_native is set to TRUE then you can define maximum value of PODs per OKE node.
-oke_cluster_name | The name of the OKE Cluster.
-vcn_native | if you want to use modern VCN-native mode for OKE then you need to set the value to TRUE.
-is_api_endpoint_subnet_public | If vcn_native is set to TRUE then you can choose if API EndPoint will be in the public or private subnet.
-is_lb_subnet_public | If vcn_native is set to TRUE then you can choose if LoadBalancer will be in the public or private subnet.
-is_nodepool_subnet_public | If vcn_native is set to TRUE then you can choose if NodePool will be in the public or private subnet.
-k8s_version | Version of K8S.
-pool_name | Node Pool Name.
-node_shape | Shape for the Node Pool members. 
-node_ocpus | If node_shape is Flex then you can define OCPUS.
-node_memory | If node_shape is Flex then you can define Memory.
-node_linux_version | Node Oracle Linux Version.
-node_count | Number of Nodes in the Pool.
-pods_cidr | K8S PODs CIDR
-services_cidr | K8S Services CIDR
-cluster_options_add_ons_is_kubernetes_dashboard_enabled | If you want to set cluster_options_add_ons_is_kubernetes_dashboard_enabled to TRUE.
-cluster_options_add_ons_is_tiller_enabled | If you want to use Tiller then you need to set the value to TRUE.
-cluster_type | Default is **enhanced** may also be set to **basic**
-node_pool_initial_node_labels_key | You can pass here node_pool_initial_node_labels_key.
-node_pool_initial_node_labels_value | You can pass here node_pool_initial_node_labels_value.
-node_eviction_node_pool_settings | If you want to setup Node Eviction Details configuration then set the value to TRUE (by default the value is equal to FALSE).
-eviction_grace_duration | If node_eviction_node_pool_settings is set to TRUE then you can setup duration after which OKE will give up eviction of the pods on the node. PT0M will indicate you want to delete the node without cordon and drain. Default PT60M, Min PT0M, Max: PT60M. Format ISO 8601 e.g PT30M
-is_force_delete_after_grace_duration | If node_eviction_node_pool_settings is set to TRUE then you can setup underlying compute instance to be deleted event if you cannot evict all the pods in grace period.
-ssh_public_key | If you want to use your own SSH public key instead of generated onne by the module.
+Each lesson folder is runnable on its own and shows a narrower scenario built on top of the same OKE foundation.
 
-## Contributing
-This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
+---
+
+## Example Usage
+
+```hcl
+module "oke" {
+  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-oke.git"
+
+  compartment_ocid     = var.compartment_ocid
+  tenancy_ocid         = var.tenancy_ocid
+  oke_cluster_name     = "fk-oke-demo"
+  cluster_type         = "enhanced"
+  k8s_version          = "v1.31.1"
+
+  use_existing_vcn     = false
+  use_existing_nsg     = false
+  vcn_native           = true
+  vcn_cidr             = "10.0.0.0/16"
+  nodepool_subnet_cidr = "10.0.1.0/24"
+  lb_subnet_cidr       = "10.0.2.0/24"
+  api_endpoint_subnet_cidr = "10.0.3.0/24"
+
+  is_api_endpoint_subnet_public = false
+  is_lb_subnet_public           = false
+  is_nodepool_subnet_public     = false
+
+  pool_name    = "fk-nodepool"
+  node_shape   = "VM.Standard.E4.Flex"
+  node_ocpus   = 1
+  node_memory  = 4
+  node_count   = 3
+
+  oci_vcn_ip_native = true
+  pods_cidr         = "10.1.0.0/16"
+  services_cidr     = "10.2.0.0/16"
+
+  autoscaler_enabled = false
+}
+```
+
+---
+
+## Inputs
+
+| Variable | Type | Default | Description |
+|---|---|---:|---|
+| `compartment_ocid` | string | `""` | Compartment OCID where OKE resources are created |
+| `tenancy_ocid` | string | `""` | Tenancy OCID used for availability domain lookup |
+| `availability_domain` | string | `""` | Optional single availability domain filter |
+| `use_existing_vcn` | bool | `true` | Reuse existing VCN and subnets instead of creating them |
+| `use_existing_nsg` | bool | `true` | Reuse existing NSG IDs for node/pod networking |
+| `vcn_cidr` | string | `10.0.0.0/16` | CIDR block used when the module creates a VCN |
+| `vcn_id` | string | `""` | Existing VCN OCID |
+| `nodepool_subnet_id` | string | `""` | Existing node pool subnet OCID |
+| `nodepool_subnet_cidr` | string | `10.0.1.0/24` | Node pool subnet CIDR when created by the module |
+| `lb_subnet_id` | string | `""` | Existing load balancer subnet OCID |
+| `lb_subnet_cidr` | string | `10.0.2.0/24` | Load balancer subnet CIDR when created by the module |
+| `api_endpoint_subnet_id` | string | `""` | Existing API endpoint subnet OCID |
+| `api_endpoint_subnet_cidr` | string | `10.0.3.0/24` | Cluster endpoint subnet CIDR when created by the module |
+| `api_endpoint_nsg_ids` | list(string) | `[]` | NSG IDs for the cluster endpoint when using an existing VCN |
+| `pods_subnet_id` | string | `""` | Existing pod subnet OCID for VCN-native mode |
+| `pods_nsg_ids` | list(string) | `[]` | NSG IDs for pod networking in VCN-native mode |
+| `oke_cluster_name` | string | `FoggyKitchenOKECluster` | OKE cluster name |
+| `vcn_native` | bool | `true` | Enable VCN-native cluster endpoint and subnet handling |
+| `is_api_endpoint_subnet_public` | bool | `false` | Make the API endpoint subnet public |
+| `is_lb_subnet_public` | bool | `false` | Make the load balancer subnet public |
+| `is_nodepool_subnet_public` | bool | `false` | Make the node pool subnet public |
+| `k8s_version` | string | `v1.31.1` | Kubernetes version |
+| `pool_name` | string | `FoggyKitchenNodePool` | Node pool name prefix |
+| `node_shape` | string | `VM.Standard.E4.Flex` | Shape used for node pools |
+| `node_pool_image_id` | string | `""` | Custom image OCID when `node_pool_image_type = "custom"` |
+| `node_pool_boot_volume_size_in_gbs` | number | `50` | Boot volume size for node pools |
+| `node_ocpus` | number | `1` | OCPUs for flex shapes |
+| `node_memory` | number | `4` | Memory in GB for flex shapes |
+| `oci_vcn_ip_native` | bool | `false` | Enable OCI VCN-native pod networking |
+| `max_pods_per_node` | number | `10` | Maximum pods per node in VCN-native mode |
+| `pods_cidr` | string | `10.1.0.0/16` | Pods CIDR when not using OCI VCN-native mode |
+| `services_cidr` | string | `10.2.0.0/16` | Kubernetes services CIDR |
+| `pods_subnet_cidr` | string | `10.0.4.0/24` | Currently unused in the root module; kept for training scenarios |
+| `virtual_node_pool` | bool | `false` | Create a virtual node pool instead of a regular node pool |
+| `node_linux_version` | string | `8.10` | Oracle Linux version used to resolve platform/OKE image sources |
+| `node_pool_count` | number | `1` | Number of regular node pools to create |
+| `node_count` | number | `3` | Number of nodes per pool |
+| `autoscaler_enabled` | bool | `false` | Create the autoscaler node pool and OKE add-on |
+| `autoscaler_authtype_workload` | bool | `true` | Enable workload-based auth for the autoscaler add-on |
+| `autoscaler_scale_down_delay_after_add` | string | `15m` | Autoscaler scale-down delay after scale-out |
+| `autoscaler_scale_down_unneeded_time` | string | `10m` | Autoscaler scale-down timeout for unneeded nodes |
+| `autoscaler_node_pool_count` | number | `1` | Number of autoscaler node pools to create |
+| `autoscaler_min_number_of_nodes` | number | `1` | Autoscaler minimum node count |
+| `autoscaler_max_number_of_nodes` | number | `10` | Autoscaler maximum node count |
+| `node_pool_image_type` | string | `oke` | Image source type: `oke`, `platform`, or `custom` |
+| `virtual_nodepool_pod_shape` | string | `Pod.Standard.E4.Flex` | Pod shape for virtual node pools |
+| `virtual_nodepool_nsg_ids` | list(string) | `[]` | NSG IDs for virtual node pool networking |
+| `cluster_type` | string | `enhanced` | Cluster type: `basic` or `enhanced` |
+| `cluster_options_add_ons_is_kubernetes_dashboard_enabled` | bool | `true` | Enable Kubernetes dashboard add-on |
+| `cluster_options_add_ons_is_tiller_enabled` | bool | `true` | Enable Tiller add-on |
+| `cluster_options_admission_controller_options_is_pod_security_policy_enabled` | bool | `false` | Enable pod security policy admission |
+| `node_pool_initial_node_labels_key` | string | `key` | Initial node label key |
+| `node_pool_initial_node_labels_value` | string | `value` | Initial node label value |
+| `cluster_kube_config_token_version` | string | `2.0.0` | Token version used for kubeconfig output |
+| `ssh_public_key` | string | `""` | Optional SSH public key for node pools |
+| `node_eviction_node_pool_settings` | bool | `false` | Enable node eviction settings on the node pool |
+| `eviction_grace_duration` | string | `PT60M` | Eviction grace duration in ISO 8601 format |
+| `is_force_delete_after_grace_duration` | bool | `true` | Force node deletion after the grace period |
+| `fk_oke_addon_map` | map(object) | `{}` | Custom OKE add-on definitions |
+
+---
+
+## Outputs
+
+| Output | Description |
+|---|---|
+| `cluster` | Cluster ID, Kubernetes version, and name |
+| `node_pool` | Node pool IDs, versions, names, and node private IPs |
+| `chosen_node_shape_and_image` | Resolved node image source name and image ID |
+| `KubeConfig` | Raw kubeconfig content |
+| `oke_cluster_addons` | Current cluster add-ons data |
+| `oke_addon_options` | Available add-on options for the selected Kubernetes version |
+
+---
+
+## Design Principles
+
+- The root module stays reusable instead of turning into a full platform wrapper
+- Networking and cluster access patterns stay explicit
+- Training examples build on one another, but each lesson remains runnable on its own
+- Outputs are treated as first-class values, because downstream lessons and examples need them
+
+---
+
+## Notes
+
+- `pods_subnet_cidr` is currently unused in the root module and appears to be reserved for training scenarios.
+- `region` is present in `variables.tf`, but the provider config is expected to supply region in the usual Terraform way.
+- `cluster_type` is validated and accepts only `basic` or `enhanced`.
+
+---
+
+## Related Resources
+
+- [Training examples](training)
+- [FoggyKitchen.com](https://foggykitchen.com/)
+
+---
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 

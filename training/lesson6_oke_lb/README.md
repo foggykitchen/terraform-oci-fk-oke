@@ -1,8 +1,6 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 06: Cluster with OCI Load Balancer
 
-## LESSON 6 - Creating OKE Cluster with OCI LoadBalancer as Kubernetes Service
-
-In this lesson, we delve into the process of creating an OKE (Oracle Kubernetes Engine) Cluster with OCI (Oracle Cloud Infrastructure) Load Balancer as a Kubernetes Service, offering a detailed guide to integrating robust load balancing capabilities within your Kubernetes deployments. This lesson focuses on the strategic implementation of OCI Load Balancer as an integral service within your OKE cluster, aiming to enhance the distribution of traffic across your applications for improved availability and performance. 
+This lesson shows how the module wires OCI Load Balancer into an OKE cluster as a Kubernetes Service. It is the main example for service exposure and public endpoint flow.
 
 ![](terraform-oci-fk-oke-lesson6.png)
 
@@ -355,7 +353,7 @@ Destroy complete! Resources: 24 destroyed.
 This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 

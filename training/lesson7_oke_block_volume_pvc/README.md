@@ -1,8 +1,6 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 07: Cluster with OCI Block Volume PVC
 
-## LESSON 7 - Creating OKE Cluster with OCI Block Volume as Kubernetes PVC
-
-In this lesson, we guide you through the creation of an OKE (Oracle Kubernetes Engine) Cluster with OCI (Oracle Cloud Infrastructure) Block Volume as Kubernetes Persistent Volume Claims (PVCs), providing a comprehensive tutorial on enhancing your Kubernetes deployments with durable and scalable storage solutions. This lesson is specifically designed to teach you how to leverage OCI Block Volumes for persistent storage needs within your Kubernetes environment, ensuring data persistence across pod reassignments and restarts. We will cover the intricacies of integrating OCI Block Volumes as PVCs, including provisioning, attaching, and managing block storage volumes to meet the dynamic storage requirements of your applications.
+This lesson covers OCI Block Volume-backed persistent storage for Kubernetes workloads. It demonstrates how the example provisions storage and binds it through PVCs.
 
 ![](terraform-oci-fk-oke-lesson7.png)
 
@@ -408,7 +406,7 @@ Destroy complete! Resources: 28 destroyed.
 This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 

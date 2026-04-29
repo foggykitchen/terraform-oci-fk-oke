@@ -1,8 +1,6 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 03: Enhanced Cluster with OKE Add-Ons
 
-## LESSON 3 - Creating OKE Enhanced Cluster with OKE Add-Ons
-
-In this lesson, we delve into the creation of an OKE Enhanced Cluster with OKE Add-Ons, providing a comprehensive tutorial on how to leverage the advanced features of Oracle Kubernetes Engine (OKE). This lesson focuses on the enhanced cluster setup, emphasizing the integration of OKE Add-Ons for a robust, scalable, and efficient Kubernetes environment. 
+This lesson extends the enhanced cluster example with OKE add-ons. It shows how the module exposes add-on configuration without hiding the underlying cluster contract.
 
 ![](terraform-oci-fk-oke-lesson3.png)
 
@@ -439,7 +437,7 @@ Destroy complete! Resources: 18 destroyed.
 This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 

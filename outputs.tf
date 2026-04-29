@@ -17,8 +17,8 @@ output "node_pool" {
 
 output "chosen_node_shape_and_image" {
   value = {
-    image_id    = element([for source in data.oci_containerengine_node_pool_option.fk_oke_node_pool_option.sources : source.image_id if length(regexall("Oracle-Linux-${var.node_linux_version}-20[0-9]*.*", source.source_name)) > 0], 0)
-    source_name = element([for source in data.oci_containerengine_node_pool_option.fk_oke_node_pool_option.sources : source.source_name if length(regexall("Oracle-Linux-${var.node_linux_version}-20[0-9]*.*", source.source_name)) > 0], 0)
+    image_id    = local.selected_image_id
+    source_name = local.selected_image_name
   }
 }
 
