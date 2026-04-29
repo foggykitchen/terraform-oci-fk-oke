@@ -1,6 +1,6 @@
 # Lesson 01: Basic OKE Cluster
 
-This is Lesson 1 from the FoggyKitchen [OCI Kubernetes Course](https://foggykitchen.com/courses/oci-kubernetes-course/). It deploys a minimal Oracle Container Engine for Kubernetes (OKE) cluster using the reusable FoggyKitchen OKE module.
+This is Lesson 1 from the FoggyKitchen [OCI Kubernetes Course](https://foggykitchen.com/courses/oci-kubernetes-course/). It deploys a minimal Oracle Container Engine for Kubernetes (OKE) cluster by composing the reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-oke` modules.
 
 It is intentionally small. The goal is to establish the baseline architecture for the rest of the training track and to stop at `tofu plan`.
 
@@ -12,16 +12,16 @@ It is intentionally small. The goal is to establish the baseline architecture fo
 
 This deployment plans to create:
 
-- A new OCI VCN
+- A new OCI VCN created by `terraform-oci-fk-vcn`
 - A cluster API endpoint subnet
 - A load balancer subnet
 - A node pool subnet with worker nodes
-- NAT Gateway and Internet Gateway for outbound access
+- An Internet Gateway, Service Gateway, and shared route table
 - Security lists for the cluster networking
-- A basic OKE cluster
+- A basic OKE cluster created by `terraform-oci-fk-oke`
 
-With `use_existing_vcn = false`, the module creates the networking resources itself.
-With `cluster_type = "basic"`, the cluster is created in basic mode rather than enhanced mode.
+The network layer is created first by `terraform-oci-fk-vcn`.
+The OKE module then consumes the resulting subnet and VCN IDs through `use_existing_vcn = true`.
 
 ---
 
@@ -35,21 +35,75 @@ The following screenshot shows the created OKE resources in OCI Console:
 
 ## Module Composition
 
-The lesson uses the root module through the `fk-oke` module block:
+The lesson is split into two reusable modules:
+
+- [networking.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson1_oke_basic_cluster/networking.tf) creates the VCN layer with `terraform-oci-fk-vcn`.
+- [oke.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson1_oke_basic_cluster/oke.tf) creates the cluster with `terraform-oci-fk-oke` and injects the subnet and VCN IDs from the network module.
 
 ```hcl
+module "fk-vcn" {
+  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-vcn.git?ref=v0.1.0"
+
+  compartment_ocid = var.compartment_ocid
+  name             = "foggykitchen-vcn"
+  vcn_cidr_blocks  = ["10.20.0.0/16"]
+
+  create_internet_gateway = true
+  create_service_gateway  = true
+
+  route_tables = {
+    public = {
+      route_rules = [
+        {
+          destination        = "0.0.0.0/0"
+          destination_type   = "CIDR_BLOCK"
+          network_entity_key = "internet_gateway"
+        },
+        {
+          destination        = "all-services"
+          destination_type   = "SERVICE_CIDR_BLOCK"
+          network_entity_key = "service_gateway"
+        }
+      ]
+    }
+  }
+
+  subnets = {
+    api_endpoint = {
+      cidr_block                 = "10.20.10.0/28"
+      route_table_key            = "public"
+      prohibit_public_ip_on_vnic = false
+    }
+    lb = {
+      cidr_block                 = "10.20.20.0/24"
+      route_table_key            = "public"
+      prohibit_public_ip_on_vnic = false
+    }
+    nodes = {
+      cidr_block                 = "10.20.30.0/24"
+      route_table_key            = "public"
+      prohibit_public_ip_on_vnic = false
+    }
+  }
+}
+
 module "fk-oke" {
   source = "../.."
 
   tenancy_ocid                  = var.tenancy_ocid
   compartment_ocid              = var.compartment_ocid
   cluster_type                  = "basic"
-  k8s_version                   = "v1.31.1"
+  k8s_version                   = "v1.35.2"
   node_linux_version            = "8.10"
   node_shape                    = "VM.Standard.A1.Flex"
   node_ocpus                    = 1
   node_memory                   = 4
-  use_existing_vcn              = false
+  use_existing_vcn              = true
+  use_existing_nsg              = false
+  vcn_id                        = module.fk-vcn.vcn_id
+  api_endpoint_subnet_id        = module.fk-vcn.subnet_ids["api_endpoint"]
+  lb_subnet_id                  = module.fk-vcn.subnet_ids["lb"]
+  nodepool_subnet_id            = module.fk-vcn.subnet_ids["nodes"]
   is_api_endpoint_subnet_public = true
   is_lb_subnet_public           = true
   is_nodepool_subnet_public     = true
@@ -58,7 +112,8 @@ module "fk-oke" {
 
 The important settings are:
 
-- `use_existing_vcn = false` makes the module create the network stack.
+- `terraform-oci-fk-vcn` creates the VCN, gateways, route table, security lists, and the three OKE-facing subnets.
+- `use_existing_vcn = true` makes `terraform-oci-fk-oke` consume those network resources instead of creating its own.
 - `cluster_type = "basic"` keeps the lesson on the basic OKE path.
 - `is_api_endpoint_subnet_public = true`, `is_lb_subnet_public = true`, and `is_nodepool_subnet_public = true` keep the example reachable in a simple public-network setup.
 
@@ -71,10 +126,9 @@ Use OpenTofu from the lesson directory:
 ```bash
 tofu init
 tofu plan
-tofu apply
 ```
 
-If the plan looks correct, it should show the OKE cluster, node pool, and supporting network resources.
+If the plan looks correct, it should show the new VCN resources from `terraform-oci-fk-vcn` and the OKE resources from `terraform-oci-fk-oke`.
 
 This lesson is intentionally limited to planning so that you can inspect the architecture before any infrastructure is created.
 
@@ -82,7 +136,7 @@ This lesson is intentionally limited to planning so that you can inspect the arc
 
 ## Cleanup
 
-If you apply the example later and want to remove everything created by it:
+If you apply the example later outside the scope of this lesson and want to remove everything created by it:
 
 ```bash
 tofu destroy
@@ -94,8 +148,8 @@ tofu destroy
 
 This example demonstrates:
 
-- How to deploy a basic OKE cluster using the reusable FoggyKitchen module
-- How the module creates the core network resources when no existing VCN is provided
+- How to compose `terraform-oci-fk-vcn` with `terraform-oci-fk-oke`
+- How to inject an existing OCI VCN and subnet layout into the OKE module
 - The baseline OKE setup used for comparison with the enhanced cluster in Lesson 02
 
 ---
