@@ -1,446 +1,142 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 02: Enhanced OKE Cluster
 
-## LESSON 2 - Creating OKE Enhanced Cluster
+This is Lesson 2 from the FoggyKitchen [OCI Kubernetes Course](https://foggykitchen.com/courses/oci-kubernetes-course/). It deploys an enhanced Oracle Container Engine for Kubernetes (OKE) cluster by composing the reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-oke` modules.
 
-In this tutorial, we will walk you through the configuration of an Enhanced OKE (Oracle Kubernetes Engine) Cluster. This advanced cluster configuration extends beyond the core capabilities offered by Kubernetes and the Container Engine for Kubernetes, incorporating premium features such as virtual nodes, cluster add-on management, and autoscaling. Unlike basic clusters, enhanced clusters are designed with a service level objective (SLO) and are supported by a financially-backed service level agreement (SLA), ensuring higher reliability and performance for your mission-critical applications. Enhanced clusters are ideal for users requiring advanced management, scalability, and reliability features directly integrated into their Kubernetes environment.
+It builds directly on Lesson 1. The main difference is that the cluster runs in `enhanced` mode with `oci_vcn_ip_native = true` and a private node pool subnet.
 
-![](terraform-oci-fk-oke-lesson2.png)
-
-## Deploy Using Oracle Resource Manager
-
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/mlinxfeld/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson2.zip)
-
-    If you aren't already signed in, when prompted, enter the tenancy and user credentials.
-
-2. Review and accept the terms and conditions.
-
-3. Select the region where you want to deploy the stack.
-
-4. Follow the on-screen prompts and instructions to create the stack.
-
-5. After creating the stack, click **Terraform Actions**, and select **Plan**.
-
-6. Wait for the job to be completed, and review the plan.
-
-    To make any changes, return to the Stack Details page, click **Edit Stack**, and make the required changes. Then, run the **Plan** action again.
-
-7. If no further changes are necessary, return to the Stack Details page, click **Terraform Actions**, and select **Apply**. 
-
-## Deploy Using the Terraform CLI in Cloud Shell
-
-### Clone of the repo into OCI Cloud Shell
-
-Now, you'll want a local copy of this repo. You can make that with the commands:
-Clone the repo from github by executing the command as follows and then go to proper subdirectory:
-
-```
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ git clone https://github.com/mlinxfeld/terraform-oci-fk-oke.git
-
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ cd terraform-oci-fk-oke
-
-martin_lin@codeeditor:terraform-oci-fk-oke (eu-frankfurt-1)$ cd training/lesson2_oke_enhanced_cluster/
-```
-
-### Prerequisites
-Create environment file with terraform.tfvars file starting with example file:
-
-```
-martin_lin@codeeditor:lesson2_oke_enhanced_cluster (eu-frankfurt-1)$ cp terraform.tfvars.example terraform.tfvars
-
-martin_lin@codeeditor:lesson2_oke_enhanced_cluster (eu-frankfurt-1)$ vi terraform.tfvars
-
-tenancy_ocid       = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
-compartment_ocid   = "ocid1.compartment.oc1..<your_comparment_ocid>"
-region             = "<oci_region>"
-```
-
-### Initialize Terraform
-
-Run the following command to initialize Terraform environment:
-
-```
-martin_lin@codeeditor:lesson2_oke_enhanced_cluster (eu-frankfurt-1)$ terraform init
-
-Initializing the backend...
-Initializing modules...
-Downloading git::https://github.com/mlinxfeld/terraform-oci-fk-oke.git for fk-oke...
-- fk-oke in .terraform/modules/fk-oke
-
-Initializing provider plugins...
-- Reusing previous version of oracle/oci from the dependency lock file
-- Reusing previous version of hashicorp/tls from the dependency lock file
-- Installing oracle/oci v5.29.0...
-- Installed oracle/oci v5.29.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
-- Installing hashicorp/tls v4.0.5...
-- Installed hashicorp/tls v4.0.5 (signed by HashiCorp)
-
-Partner and community providers are signed by their developers.
-If you'd like to know more about provider signing, you can read about it here:
-https://www.terraform.io/docs/cli/plugins/signing.html
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
-```
-
-### Apply the changes 
-
-Run the following command for applying changes with the proposed plan:
-
-```
-martin_lin@codeeditor:lesson2_oke_enhanced_cluster (eu-frankfurt-1)$ terraform apply
-module.fk-oke.data.oci_containerengine_node_pool_option.fk_oke_node_pool_option: Reading...
-module.fk-oke.data.oci_containerengine_addon_options.fk_oke_addon_options: Reading...
-module.fk-oke.data.oci_identity_availability_domains.ADs: Reading...
-module.fk-oke.data.oci_containerengine_cluster_option.fk_oke_cluster_option: Reading...
-module.fk-oke.data.oci_identity_availability_domains.AD: Reading...
-module.fk-oke.data.oci_core_services.AllOCIServices[0]: Reading...
-module.fk-oke.data.oci_core_services.AllOCIServices[0]: Read complete after 0s [id=CoreServicesDataSource-0]
-module.fk-oke.data.oci_identity_availability_domains.ADs: Read complete after 0s [id=IdentityAvailabilityDomainsDataSource-3596290162]
-module.fk-oke.data.oci_containerengine_cluster_option.fk_oke_cluster_option: Read complete after 0s [id=ContainerengineClusterOptionDataSource-1870923232]
-module.fk-oke.data.oci_identity_availability_domains.AD: Read complete after 0s [id=IdentityAvailabilityDomainsDataSource-3596290162]
-module.fk-oke.data.oci_containerengine_addon_options.fk_oke_addon_options: Read complete after 0s [id=ContainerengineAddonOptionsDataSource-1219351960]
-module.fk-oke.data.oci_containerengine_node_pool_option.fk_oke_node_pool_option: Read complete after 1s [id=ContainerengineNodePoolOptionDataSource-1870923232]
-
-Terraform used the selected providers to generate the following execution
-plan. Resource actions are indicated with the following symbols:
-  + create
- <= read (data resources)
-
-Terraform will perform the following actions:
-
-  # module.fk-oke.data.oci_containerengine_addons.fk_oke_cluster_addons will be read during apply
-  # (config refers to values not yet known)
- <= data "oci_containerengine_addons" "fk_oke_cluster_addons" {
-      + addons     = (known after apply)
-      + cluster_id = (known after apply)
-      + id         = (known after apply)
-    }
-
-  # module.fk-oke.data.oci_containerengine_cluster_kube_config.KubeConfig will be read during apply
-  # (config refers to values not yet known)
- <= data "oci_containerengine_cluster_kube_config" "KubeConfig" {
-      + cluster_id    = (known after apply)
-      + content       = (known after apply)
-      + id            = (known after apply)
-      + token_version = "2.0.0"
-    }
-
-  # module.fk-oke.oci_containerengine_cluster.fk_oke_cluster will be created
-  + resource "oci_containerengine_cluster" "fk_oke_cluster" {
-      + available_kubernetes_upgrades = (known after apply)
-      + compartment_id                = "ocid1.compartment.oc1..aaaaaaaaiyy4srmrb32v5rlniicwmpxsytywiucgbcp5ext6e4ahjfuloewa"
-      + defined_tags                  = (known after apply)
-      + endpoints                     = (known after apply)
-      + freeform_tags                 = (known after apply)
-      + id                            = (known after apply)
-      + kms_key_id                    = (known after apply)
-      + kubernetes_version            = "v1.28.2"
-      + lifecycle_details             = (known after apply)
-      + metadata                      = (known after apply)
-      + name                          = "FoggyKitchenOKECluster"
-      + state                         = (known after apply)
-      + type                          = "BASIC_CLUSTER"
-      + vcn_id                        = (known after apply)
-
-      + endpoint_config {
-          + is_public_ip_enabled = true
-          + subnet_id            = (known after apply)
-        }
-
-      + options {
-          + service_lb_subnet_ids = (known after apply)
-
-          + add_ons {
-              + is_kubernetes_dashboard_enabled = true
-              + is_tiller_enabled               = true
-            }
-
-          + admission_controller_options {
-              + is_pod_security_policy_enabled = false
-            }
-
-          + kubernetes_network_config {
-              + pods_cidr     = "10.1.0.0/16"
-              + services_cidr = "10.2.0.0/16"
-            }
-        }
-    }
-
-  # module.fk-oke.oci_containerengine_node_pool.fk_oke_node_pool[0] will be created
-  + resource "oci_containerengine_node_pool" "fk_oke_node_pool" {
-      + cluster_id          = (known after apply)
-      + compartment_id      = "ocid1.compartment.oc1..aaaaaaaaiyy4srmrb32v5rlniicwmpxsytywiucgbcp5ext6e4ahjfuloewa"
-      + defined_tags        = (known after apply)
-      + freeform_tags       = (known after apply)
-      + id                  = (known after apply)
-      + kubernetes_version  = "v1.28.2"
-      + lifecycle_details   = (known after apply)
-      + name                = "FoggyKitchenNodePool1"
-      + node_image_id       = (known after apply)
-      + node_image_name     = (known after apply)
-      + node_metadata       = (known after apply)
-      + node_shape          = "VM.Standard.A1.Flex"
-      + node_source         = (known after apply)
-      + nodes               = (known after apply)
-      + quantity_per_subnet = (known after apply)
-      + ssh_public_key      = (known after apply)
-      + state               = (known after apply)
-      + subnet_ids          = (known after apply)
-
-      + initial_node_labels {
-          + key   = "key"
-          + value = "value"
-        }
-
-      + node_config_details {
-          + defined_tags                        = (known after apply)
-          + freeform_tags                       = (known after apply)
-          + is_pv_encryption_in_transit_enabled = (known after apply)
-          + kms_key_id                          = (known after apply)
-          + nsg_ids                             = (known after apply)
-          + size                                = 3
-
-          + placement_configs {
-              + availability_domain     = "unja:EU-FRANKFURT-1-AD-1"
-              + capacity_reservation_id = (known after apply)
-              + fault_domains           = (known after apply)
-              + subnet_id               = (known after apply)
-            }
-          + placement_configs {
-              + availability_domain     = "unja:EU-FRANKFURT-1-AD-2"
-              + capacity_reservation_id = (known after apply)
-              + fault_domains           = (known after apply)
-              + subnet_id               = (known after apply)
-            }
-          + placement_configs {
-              + availability_domain     = "unja:EU-FRANKFURT-1-AD-3"
-              + capacity_reservation_id = (known after apply)
-              + fault_domains           = (known after apply)
-              + subnet_id               = (known after apply)
-            }
-        }
-
-      + node_shape_config {
-          + memory_in_gbs = 4
-          + ocpus         = 1
-        }
-
-      + node_source_details {
-          + boot_volume_size_in_gbs = "50"
-          + image_id                = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaiiymiaz2loraurxo6dgj5y4oiturf4inrkzvwimzw3d2a42kns6q"
-          + source_type             = "IMAGE"
-        }
-    }
-
-  (...)
-
-  # module.fk-oke.tls_private_key.public_private_key_pair will be created
-  + resource "tls_private_key" "public_private_key_pair" {
-      + algorithm                     = "RSA"
-      + ecdsa_curve                   = "P224"
-      + id                            = (known after apply)
-      + private_key_openssh           = (sensitive value)
-      + private_key_pem               = (sensitive value)
-      + private_key_pem_pkcs8         = (sensitive value)
-      + public_key_fingerprint_md5    = (known after apply)
-      + public_key_fingerprint_sha256 = (known after apply)
-      + public_key_openssh            = (known after apply)
-      + public_key_pem                = (known after apply)
-      + rsa_bits                      = 2048
-    }
-
-Plan: 14 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  + Cluster    = {
-      + id                 = (known after apply)
-      + kubernetes_version = "v1.28.2"
-      + name               = "FoggyKitchenOKECluster"
-    }
-  + KubeConfig = (known after apply)
-  + NodePool   = {
-      + id                 = [
-          + (known after apply),
-        ]
-      + kubernetes_version = [
-          + "v1.28.2",
-        ]
-      + name               = [
-          + "FoggyKitchenNodePool1",
-        ]
-      + nodes              = [
-          + (known after apply),
-        ]
-    }
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-(...)
-
-null_resource.deploy_nginx(local-exec): Executing: ["/bin/sh" "-c" "kubectl get pods"]
-null_resource.deploy_nginx (local-exec): NAME                                READY   STATUS    RESTARTS   AGE
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-5jbp9   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-76l2s   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-774th   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-bgbc6   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-gvmrj   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-m8h9k   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-mdgdt   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-n6h7w   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-q5n9t   1/1     Running   0          2m1s
-null_resource.deploy_nginx (local-exec): nginx-deployment-6d999996df-r8vsn   1/1     Running   0          2m1s
-null_resource.deploy_nginx: Provisioning with 'local-exec'...
-null_resource.deploy_nginx(local-exec): Executing: ["/bin/sh" "-c" "kubectl describe  pods | grep '  IP:'"]
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.30
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.15
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.62
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.12
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.35
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.220
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.143
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.254
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.87
-null_resource.deploy_nginx (local-exec):   IP:           10.0.1.240
-null_resource.deploy_nginx: Creation complete after 2m6s [id=8414799337788290871]
-Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
-Outputs:
-Cluster = {
-  "id" = "ocid1.cluster.oc1.eu-frankfurt-1.aaaaaaaabjf4ukyub4rgtg46gd4x5gcmktoeprbvnyhtcbwyjc23bcbl6ula"
-  "kubernetes_version" = "v1.28.2"
-  "name" = "FoggyKitchenOKECluster"
-}
-KubeConfig = <<EOT
 ---
-apiVersion: v1
-kind: ""
-clusters:
-- name: cluster-c23bcbl6ula
-  cluster:
-    server: https://138.2.151.133:6443
-    certificate-authority-data: LS0tLS1CR(...)Q0FURS0tLS0tCg==
-users:
-- name: user-c23bcbl6ula
-  user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1beta1
-      command: oci
-      args:
-      - ce
-      - cluster
-      - generate-token
-      - --cluster-id
-      - ocid1.cluster.oc1.eu-frankfurt-1.aaaaaaaabjf4ukyub4rgtg46gd4x5gcmktoeprbvnyhtcbwyjc23bcbl6ula
-      - --region
-      - eu-frankfurt-1
-      env: []
-contexts:
-- name: context-c23bcbl6ula
-  context:
-    cluster: cluster-c23bcbl6ula
-    user: user-c23bcbl6ula
-current-context: context-c23bcbl6ula
-EOT
-NodePool = {
-  "id" = tolist([
-    "ocid1.nodepool.oc1.eu-frankfurt-1.aaaaaaaambacwztojnmamifejxvdnv6abubkgbvewovctym24nsh4jrks4qq",
-  ])
-  "kubernetes_version" = tolist([
-    "v1.28.2",
-  ])
-  "name" = tolist([
-    "FoggyKitchenNodePool1",
-  ])
-  "nodes" = [
-    tolist([
-      "10.0.1.10",
-      "10.0.1.158",
-      "10.0.1.137",
-    ]),
-  ]
+
+## Architecture Overview
+
+![](terraform-oci-fk-oke-lesson2-architecture.png)
+
+This deployment plans to create:
+
+- A new OCI VCN created by `terraform-oci-fk-vcn`
+- A cluster API endpoint subnet created by `terraform-oci-fk-vcn`
+- A load balancer subnet created by `terraform-oci-fk-vcn`
+- A private node pool subnet created by `terraform-oci-fk-vcn`, with worker nodes created by `terraform-oci-fk-oke`
+- An Internet Gateway, NAT Gateway, Service Gateway, and separate public/private route tables created by `terraform-oci-fk-vcn`
+- Security lists for the cluster networking created by `terraform-oci-fk-vcn`
+- An enhanced OKE cluster created by `terraform-oci-fk-oke`
+
+The network layer is created first by `terraform-oci-fk-vcn`.
+That includes the VCN, subnets, gateways, route tables, and security lists.
+The OKE module then consumes the resulting subnet and VCN IDs through `use_existing_vcn = true`.
+
+---
+
+## OCI Console View
+
+The following screenshot shows the created OKE resources in OCI Console:
+
+![](terraform-oci-fk-oke-lesson2-oci-console.png)
+
+The architecture diagram is conceptual and illustrates the target enhanced OKE topology.
+The current lesson implementation uses `terraform-oci-fk-vcn` with security lists and reusable subnet outputs consumed by `terraform-oci-fk-oke`.
+
+---
+
+## Module Composition
+
+The lesson is split into two reusable modules:
+
+- [networking.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson2_oke_enhanced_cluster/networking.tf) creates the VCN layer with `terraform-oci-fk-vcn`, including subnets, gateways, route tables, and security lists.
+- [oke.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson2_oke_enhanced_cluster/oke.tf) creates the enhanced cluster with `terraform-oci-fk-oke` and injects the subnet and VCN IDs from the network module.
+
+```hcl
+module "fk-vcn" {
+  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-vcn.git?ref=v0.1.0"
+
+  compartment_ocid = var.compartment_ocid
+  name             = "foggykitchen-vcn"
+  vcn_cidr_blocks  = ["10.20.0.0/16"]
+
+  create_internet_gateway = true
+  create_nat_gateway      = true
+  create_service_gateway  = true
 }
 
+module "fk-oke" {
+  source = "../.."
+
+  tenancy_ocid                  = var.tenancy_ocid
+  compartment_ocid              = var.compartment_ocid
+  cluster_type                  = "enhanced"
+  k8s_version                   = "v1.35.2"
+  node_linux_version            = "8.10"
+  oci_vcn_ip_native             = true
+  vcn_native                    = true
+  use_existing_vcn              = true
+  use_existing_nsg              = false
+  vcn_id                        = module.fk-vcn.vcn_id
+  api_endpoint_subnet_id        = module.fk-vcn.subnet_ids["api_endpoint"]
+  lb_subnet_id                  = module.fk-vcn.subnet_ids["lb"]
+  nodepool_subnet_id            = module.fk-vcn.subnet_ids["nodes"]
+  pods_subnet_id                = module.fk-vcn.subnet_ids["nodes"]
+  is_api_endpoint_subnet_public = true
+  is_lb_subnet_public           = true
+  is_nodepool_subnet_public     = false
+}
 ```
 
-### Destroy the changes 
+The important settings are:
 
-Run the following command for destroying all resources:
+- `terraform-oci-fk-vcn` creates the VCN, gateways, route tables, security lists, and the three OKE-facing subnets.
+- the public route table uses the Internet Gateway, while the private route table uses NAT Gateway plus Service Gateway access for Oracle services.
+- `create_nat_gateway = true` and the private route table keep the node pool subnet private while still allowing outbound access.
+- `use_existing_vcn = true` makes `terraform-oci-fk-oke` consume those network resources instead of creating its own.
+- `vcn_id`, `api_endpoint_subnet_id`, `lb_subnet_id`, and `nodepool_subnet_id` are injected from `terraform-oci-fk-vcn` outputs into `terraform-oci-fk-oke`.
+- `pods_subnet_id` is also injected for `oci_vcn_ip_native = true`, using the same private subnet in this lesson.
+- `cluster_type = "enhanced"` switches the module to the enhanced OKE path.
+- `oci_vcn_ip_native = true` enables OCI VCN-native pod networking.
+- `is_nodepool_subnet_public = false` keeps worker nodes off the public internet.
 
-```
-martin_lin@codeeditor:lesson2_oke_enhanced_cluster (eu-frankfurt-1)$ terraform destroy
+---
 
-data.template_file.nginx_deployment: Reading...
-data.template_file.nginx_deployment: Read complete after 0s [id=e8338d25ad6bc03b264552a9cc6b9020e244555c6f3c6edc2b30afa6347c1c44]
-local_file.nginx_deployment: Refreshing state... [id=daacc54085c4f86be24e42313b713188fe250a4f]
-module.fk-oke.tls_private_key.public_private_key_pair: Refreshing state... [id=57c135f9de74e3ed4c8784f22501612a4bc05c31]
-module.fk-oke.data.oci_containerengine_cluster_option.fk_oke_cluster_option: Reading...
-module.fk-oke.data.oci_containerengine_addon_options.fk_oke_addon_options: Reading...
-module.fk-oke.data.oci_containerengine_node_pool_option.fk_oke_node_pool_option: Reading...
-module.fk-oke.data.oci_core_services.AllOCIServices[0]: Reading...
-module.fk-oke.data.oci_identity_availability_domains.AD: Reading...
-(...)
-null_resource.deploy_nginx: Refreshing state... [id=6451609765774392253]
-module.fk-oke.data.oci_containerengine_cluster_kube_config.KubeConfig: Read complete after 0s [id=ContainerengineClusterKubeConfigDataSource-1653731019]
+## Deployment Steps
 
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  - destroy
+Use OpenTofu from the lesson directory:
 
-Terraform will perform the following actions:
-
-  # local_file.nginx_deployment will be destroyed
-  - resource "local_file" "nginx_deployment" {
-      - content              = <<-EOT
-            apiVersion: apps/v1
-            kind: Deployment
-
-(...)
-
-Plan: 0 to add, 0 to change, 16 to destroy.
-
-(...)
-
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value: yes
-
-null_resource.deploy_nginx: Destroying... [id=6451609765774392253]
-null_resource.deploy_nginx: Destruction complete after 0s
-local_file.nginx_deployment: Destroying... [id=daacc54085c4f86be24e42313b713188fe250a4f]
-local_file.nginx_deployment: Destruction complete after 0s
-module.fk-oke.oci_containerengine_node_pool.fk_oke_node_pool[0]: Destroying... [id=ocid1.nodepool.oc1.eu-frankfurt-1.aaaaaaaaafe3nm3ecdihhsbe77rnlhqxg4bubpwttxomwsihingiaaksrkrq]
-(...)
-module.fk-oke.oci_core_route_table.fk_oke_rt_via_igw[0]: Destruction complete after 1s
-module.fk-oke.oci_core_internet_gateway.fk_oke_igw[0]: Destroying... [id=ocid1.internetgateway.oc1.eu-frankfurt-1.aaaaaaaabf7cvginclb6wl43lwbjyjhe6jyfuqbmlhqssto46c4p4sdcr4ea]
-module.fk-oke.oci_core_route_table.fk_oke_rt_via_natgw_and_sg[0]: Destruction complete after 1s
-module.fk-oke.oci_core_nat_gateway.fk_oke_natgw[0]: Destroying... [id=ocid1.natgateway.oc1.eu-frankfurt-1.aaaaaaaaocgmzwmrai3blimipa35fp36xtmdv5tmerxnww5ro6i6i6dmko2q]
-module.fk-oke.oci_core_service_gateway.fk_oke_sg[0]: Destroying... [id=ocid1.servicegateway.oc1.eu-frankfurt-1.aaaaaaaagpc5yvusmts6eropo7s275lgnyrqdhlc375pxy7ka7ikvy2qtdaq]
-module.fk-oke.oci_core_internet_gateway.fk_oke_igw[0]: Destruction complete after 0s
-module.fk-oke.oci_core_nat_gateway.fk_oke_natgw[0]: Destruction complete after 1s
-module.fk-oke.oci_core_service_gateway.fk_oke_sg[0]: Destruction complete after 4s
-module.fk-oke.oci_core_vcn.fk_oke_vcn[0]: Destroying... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giayvft35o5frxjbapbrna5kjkzxin6wy2ohippiqnhhiwa]
-module.fk-oke.oci_core_vcn.fk_oke_vcn[0]: Destruction complete after 0s
-
-Destroy complete! Resources: 16 destroyed.
+```bash
+tofu init
+tofu plan
 ```
 
-## Contributing
-This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
+If the plan looks correct, it should show the new VCN resources from `terraform-oci-fk-vcn` and the enhanced OKE resources from `terraform-oci-fk-oke`.
+
+This lesson is intentionally limited to planning so that you can inspect the enhanced cluster architecture before any infrastructure is created.
+
+---
+
+## Cleanup
+
+If you apply the example later outside the scope of this lesson and want to remove everything created by it:
+
+```bash
+tofu destroy
+```
+
+---
+
+## Summary
+
+This example demonstrates:
+
+- How to compose `terraform-oci-fk-vcn` with `terraform-oci-fk-oke` for an enhanced cluster
+- How to inject an existing OCI VCN and subnet layout into the OKE module
+- How to keep the API and load balancer subnets public while keeping the node pool subnet private
+- The enhanced OKE setup used as the baseline for later lessons
+
+---
+
+## Learn More
+
+Visit [FoggyKitchen.com](https://foggykitchen.com/) for OCI, multicloud, and Terraform learning resources, including the full [OCI Kubernetes Course](https://foggykitchen.com/courses/oci-kubernetes-course/).
+
+---
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
-
-See [LICENSE](LICENSE) for more details.
+See [LICENSE](../../LICENSE) for more details.

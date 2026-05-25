@@ -1,8 +1,6 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 08: Cluster with OCI File Storage PVC
 
-## LESSON 8 - Creating OKE Cluster with OCI File Storage Service as Kubernetes PVC
-
-In this lesson, we take a comprehensive look at creating an OKE (Oracle Kubernetes Engine) Cluster with OCI (Oracle Cloud Infrastructure) File Storage Service as Kubernetes Persistent Volume Claims (PVCs). This tutorial is aimed at equipping you with the knowledge to incorporate OCI File Storage Service into your Kubernetes deployments, offering a scalable, shared storage solution that supports the concurrent access needs of your applications. Throughout this lesson, we will dive into the process of setting up and integrating OCI File Storage Service as PVCs, demonstrating how to provision and mount shared file systems within your Kubernetes environment. The focus will be on the seamless management of file storage, enabling applications to efficiently share data across multiple pods and nodes.
+This lesson covers OCI File Storage Service-backed persistent storage for Kubernetes workloads. It demonstrates the shared storage pattern used by the module examples.
 
 ![](terraform-oci-fk-oke-lesson8.png)
 
@@ -334,7 +332,7 @@ Destroy complete! Resources: 40 destroyed.
 This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 

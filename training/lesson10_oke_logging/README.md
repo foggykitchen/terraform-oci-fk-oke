@@ -1,16 +1,12 @@
-# FoggyKitchen OCI Container Engine for Kubernetes with Terraform 
+# Lesson 10: Basic Cluster with OCI Logging
 
-## LESSON 10 - Creating OKE Basic Cluster with OCI Logging
-
-In this lesson, we'll guide you through the process of setting up a Basic OKE Cluster. This type of cluster supports all essential features offered by Kubernetes and the Container Engine for Kubernetes, but it lacks the advanced functionalities available in enhanced clusters, like virtual nodes and cluster add-on management. Although basic clusters are equipped with a service level objective (SLO), they do not come with a financially-backed service level agreement (SLA).
-
-Additionally, we’ll show you how to enable OCI Logging for your Kubernetes control plane and workloads. By integrating logging capabilities during the provisioning process, you'll gain better observability into your cluster's behavior, including API server events, node-level messages, and application logs.
+This lesson adds OCI Logging to the basic OKE cluster example. It covers cluster observability for control plane and workload logs.
 
 ![](terraform-oci-fk-oke-lesson10.png)
 
 ## Deploy Using Oracle Resource Manager
 
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/mlinxfeld/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson1.zip)
+1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/mlinxfeld/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson10.zip)
 
     If you aren't already signed in, when prompted, enter the tenancy and user credentials.
 
@@ -490,7 +486,7 @@ Destroy complete! Resources: 16 destroyed.
 This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
 
 ## License
-Copyright (c) 2025 [FoggyKitchen.com](https://foggykitchen.com/)
+Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 
