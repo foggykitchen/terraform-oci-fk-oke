@@ -1,0 +1,9 @@
+repository:
+  description: Reusable Terraform / OpenTofu module for provisioning OCI Container Engine for Kubernetes (OKE) clusters, node pools, virtual nodes, add-ons, and supporting network infrastructure.
+  topics:
+    - kubernetes
+    - oke
+    - terraform
+    - training-materials
+    - oraclecloud
+    - oraclecloudinfrastructure
