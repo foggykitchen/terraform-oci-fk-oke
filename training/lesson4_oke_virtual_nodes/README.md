@@ -24,14 +24,6 @@ This lesson uses:
 
 The cluster is configured in [oke_UPDATED.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson4_oke_virtual_nodes/oke_UPDATED.tf), and the IAM policy composition is defined in [iam_UPDATED.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson4_oke_virtual_nodes/iam_UPDATED.tf).
 
-## Deploy Using Oracle Resource Manager
-
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/foggykitchen/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson4.zip)
-2. Review and accept the terms and conditions.
-3. Select the region where you want to deploy the stack.
-4. Create the stack and run **Plan**.
-5. Review the plan and run **Apply** if it matches expectations.
-
 ## Deploy Using Terraform CLI
 
 ### Clone The Repository
