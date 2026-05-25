@@ -34,14 +34,6 @@ When `deploy_adbs = true`, lesson 3 also creates:
 
 That IAM wiring is delegated to `github.com/mlinxfeld/terraform-oci-fk-policy` in [iam_NEW.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson3_oke_addons/iam_NEW.tf).
 
-## Deploy Using Oracle Resource Manager
-
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/foggykitchen/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson3.zip)
-2. Review and accept the terms and conditions.
-3. Select the region where you want to deploy the stack.
-4. Create the stack and run **Plan**.
-5. Review the plan and run **Apply** if it matches expectations.
-
 ## Deploy Using Terraform CLI
 
 ### Clone The Repository
