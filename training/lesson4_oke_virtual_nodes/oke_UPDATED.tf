@@ -1,11 +1,11 @@
 module "fk-oke" {
   providers                     = { oci = oci.targetregion }
-  depends_on                    = [oci_identity_policy.fk_oke_virtual_node_pool_policy]
-  source                        = "github.com/foggykitchen/terraform-oci-fk-oke"
+  depends_on                    = [module.fk_policy_virtual_node_pool]
+  source                        = "../.."
   tenancy_ocid                  = var.tenancy_ocid
   compartment_ocid              = var.compartment_ocid
   cluster_type                  = "enhanced"
-  k8s_version                   = "v1.31.1"
+  k8s_version                   = "v1.35.2"
   node_linux_version            = "8.10"
   oci_vcn_ip_native             = true
   use_existing_vcn              = false
