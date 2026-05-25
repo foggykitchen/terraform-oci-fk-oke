@@ -138,8 +138,9 @@ This project is open source. Contributions are welcome through pull requests.
 
 ## License
 
-Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](../../LICENSE) for details.
 
-Licensed under the Universal Permissive License (UPL), Version 1.0.
+---
 
-See [LICENSE](LICENSE) for details.
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.
