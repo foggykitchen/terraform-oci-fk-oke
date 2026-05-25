@@ -1,413 +1,158 @@
 # Lesson 07: Cluster with OCI Block Volume PVC
 
-This lesson covers OCI Block Volume-backed persistent storage for Kubernetes workloads. It demonstrates how the example provisions storage and binds it through PVCs.
+This lesson covers OCI Block Volume-backed persistent storage for Kubernetes workloads. It uses the local `terraform-oci-fk-oke` module for the cluster, FoggyKitchen networking modules for the surrounding VCN and load balancer path, and `terraform-oci-fk-blockvolume` for the optional pre-created volume consumed by the PVC flow.
 
 ![](terraform-oci-fk-oke-lesson7.png)
 
-## Deploy Using Oracle Resource Manager
+## What This Lesson Shows
 
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/foggykitchen/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson7.zip)
+- An enhanced OKE cluster using the local `terraform-oci-fk-oke` module
+- Reusable VCN composition through `terraform-oci-fk-vcn`
+- Optional reserved public IP through `terraform-oci-fk-public-ip`
+- Optional load balancer NSG through `terraform-oci-fk-nsg`
+- Optional pre-created OCI Block Volume through `terraform-oci-fk-blockvolume`
+- Kubernetes StorageClass, PVC, and NGINX deployment flow for persistent storage
 
-    If you aren't already signed in, when prompted, enter the tenancy and user credentials.
+This lesson focuses on PVC-backed application storage while keeping OCI infrastructure concerns on reusable FoggyKitchen modules instead of raw resources in the lesson.
 
-2. Review and accept the terms and conditions.
+## Architecture Notes
 
-3. Select the region where you want to deploy the stack.
+This lesson uses:
 
-4. Follow the on-screen prompts and instructions to create the stack.
+- the local OKE module via `../..`
+- `terraform-oci-fk-vcn` for the VCN, subnets, route tables, gateways, and security lists
+- `terraform-oci-fk-public-ip` for the optional reserved load balancer frontend IP
+- `terraform-oci-fk-nsg` for the optional OCI load balancer NSG
+- `terraform-oci-fk-blockvolume` for the optional pre-created OCI block volume
 
-5. After creating the stack, click **Terraform Actions**, and select **Plan**.
+The OKE cluster is configured in [oke_UPDATED.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson7_oke_block_volume_pvc/oke_UPDATED.tf), module-based infrastructure composition is defined in [network.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson7_oke_block_volume_pvc/network.tf) and [block_volume_NEW.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson7_oke_block_volume_pvc/block_volume_NEW.tf), and the Kubernetes deployment flow is in [deploy_UPDATED.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson7_oke_block_volume_pvc/deploy_UPDATED.tf).
 
-6. Wait for the job to be completed, and review the plan.
+## Deploy Using Terraform CLI
 
-    To make any changes, return to the Stack Details page, click **Edit Stack**, and make the required changes. Then, run the **Plan** action again.
+### Clone The Repository
 
-7. If no further changes are necessary, return to the Stack Details page, click **Terraform Actions**, and select **Apply**. 
-
-## Deploy Using the Terraform CLI in Cloud Shell
-
-### Clone of the repo into OCI Cloud Shell
-
-Now, you'll want a local copy of this repo. You can make that with the commands:
-Clone the repo from github by executing the command as follows and then go to proper subdirectory:
-
-```
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ git clone https://github.com/foggykitchen/terraform-oci-fk-oke.git
-
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ cd terraform-oci-fk-oke
-
-martin_lin@codeeditor:terraform-oci-fk-oke (eu-frankfurt-1)$ cd training/lesson7_oke_block_volume_pvc/
+```bash
+git clone https://github.com/foggykitchen/terraform-oci-fk-oke.git
+cd terraform-oci-fk-oke/training/lesson7_oke_block_volume_pvc
 ```
 
-### Prerequisites
-Create environment file with terraform.tfvars file starting with example file:
+### Create `terraform.tfvars`
 
+Start from the example file:
+
+```bash
+cp terraform.tfvars.example terraform.tfvars
 ```
-martin_lin@codeeditor:lesson7_oke_block_volume_pvc (eu-frankfurt-1)$ cp terraform.tfvars.example terraform.tfvars
 
-martin_lin@codeeditor:lesson7_oke_block_volume_pvc (eu-frankfurt-1)$ vi terraform.tfvars
+Minimum required values:
 
-tenancy_ocid       = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
-compartment_ocid   = "ocid1.compartment.oc1..<your_comparment_ocid>"
-region             = "<oci_region>"
+```hcl
+tenancy_ocid     = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
+user_ocid        = "ocid1.user.oc1..<your_user_ocid>"
+compartment_ocid = "ocid1.compartment.oc1..<your_compartment_ocid>"
+region           = "<oci_region>"
+fingerprint      = "<fingerprint>"
+private_key_path = "<private_key_path>"
+```
+
+Optional storage and load balancer tuning:
+
+```hcl
+pvc_from_existing_block_volume = true
+block_volume_name              = "fkblockvolume"
+block_volume_size              = 50
+fs_type                        = "ext4"
+vpus_per_gb                    = 0
+lb_shape                       = "flexible"
+use_reserved_public_ip_for_lb  = true
+lb_nsg                         = true
 ```
 
 ### Initialize Terraform
 
-Run the following command to initialize Terraform environment:
-
-```
-martin_lin@codeeditor:lesson7_oke_block_volume_pvc (eu-frankfurt-1)$ terraform init
-
-Initializing the backend...
-Initializing modules...
-Downloading git::https://github.com/foggykitchen/terraform-oci-fk-oke.git for fk-oke...
-- fk-oke in .terraform/modules/fk-oke
-
-Initializing provider plugins...
-- Reusing previous version of oracle/oci from the dependency lock file
-- Reusing previous version of hashicorp/tls from the dependency lock file
-- Installing oracle/oci v5.29.0...
-- Installed oracle/oci v5.29.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
-- Installing hashicorp/tls v4.0.5...
-- Installed hashicorp/tls v4.0.5 (signed by HashiCorp)
-
-Partner and community providers are signed by their developers.
-If you'd like to know more about provider signing, you can read about it here:
-https://www.terraform.io/docs/cli/plugins/signing.html
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
+```bash
+terraform init
 ```
 
-### Apply the changes 
+Expected module sources:
 
-Run the following command for applying changes with the proposed plan:
+- local `../..` for the OKE module
+- `terraform-oci-fk-vcn` for network composition
+- `terraform-oci-fk-public-ip` for the optional reserved public IP
+- `terraform-oci-fk-nsg` for the optional load balancer NSG
+- `terraform-oci-fk-blockvolume` for the optional pre-created block volume
 
-```
-martin_lin@codeeditor:lesson7_oke_block_volume_pvc (eu-frankfurt-1)$ terraform apply
-data.template_file.storageclass_deployment: Reading...
-data.template_file.storageclass_deployment: Read complete after 0s [id=369a254bdcb83202c8156b1d0d0c6bb5c348c45228667983720eecde248378e0]
-module.fk-oke.data.oci_identity_availability_domains.AD: Reading...
-module.fk-oke.data.oci_containerengine_cluster_option.fk_oke_cluster_option: Reading...
-module.fk-oke.data.oci_identity_availability_domains.ADs: Reading...
-module.fk-oke.data.oci_containerengine_addon_options.fk_oke_addon_options: Reading...
-module.fk-oke.data.oci_containerengine_node_pool_option.fk_oke_node_pool_option: Reading...
-module.fk-oke.data.oci_identity_availability_domains.AD: Read complete after 0s [id=IdentityAvailabilityDomainsDataSource-3596290162]
-module.fk-oke.data.oci_identity_availability_domains.ADs: Read complete after 0s [id=IdentityAvailabilityDomainsDataSource-3596290162]
-module.fk-oke.data.oci_containerengine_cluster_option.fk_oke_cluster_option: Read complete after 0s [id=ContainerengineClusterOptionDataSource-1870923232]
-module.fk-oke.data.oci_containerengine_addon_options.fk_oke_addon_options: Read complete after 0s [id=ContainerengineAddonOptionsDataSource-1219351960]
-data.oci_core_services.FoggyKitchenAllOCIServices: Reading...
-data.oci_identity_availability_domains.ADs: Reading...
-data.oci_identity_availability_domains.ADs: Read complete after 0s [id=IdentityAvailabilityDomainsDataSource-3596290162]
-data.oci_core_services.FoggyKitchenAllOCIServices: Read complete after 0s [id=CoreServicesDataSource-0]
-module.fk-oke.data.oci_containerengine_node_pool_option.fk_oke_node_pool_option: Read complete after 1s [id=ContainerengineNodePoolOptionDataSource-1870923232]
+### Apply
 
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  + create
- <= read (data resources)
-
-Terraform will perform the following actions:
-
-  # data.template_file.nginx_deployment will be read during apply
-  # (depends on a resource or a module with changes pending)
- <= data "template_file" "nginx_deployment" {
-      + id       = (known after apply)
-      + rendered = (known after apply)
-      + template = <<-EOT
-            apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-              name: nginx-deployment
-            spec:
-              selector:
-                matchLabels:
-                  app: nginx
-              replicas: 1
-              template:
-                metadata:
-                  labels:
-                    app: nginx
-                spec:
-                  containers:
-                  - name: nginx
-                    image: nginx:1.14.2
-                    ports:
-                    - containerPort: 80
-                    resources:
-                      requests:
-                        memory: "500Mi"
-                    volumeMounts:
-                      - name: data
-                        mountPath: /var/www/html
-                  volumes:
-                    - name: data
-                      persistentVolumeClaim:
-                        claimName: ${block_volume_name}
-                  ${ is_arm_node_shape ? "nodeSelector:" : "" }
-                    ${ is_arm_node_shape ? "kubernetes.io/arch: arm64" : "" }
-        EOT
-      + vars     = {
-          + "block_volume_name" = "fkblockvolume"
-          + "is_arm_node_shape" = "true"
-        }
-    }
-
-(...)
-
-# module.fk-oke.tls_private_key.public_private_key_pair will be created
-  + resource "tls_private_key" "public_private_key_pair" {
-      + algorithm                     = "RSA"
-      + ecdsa_curve                   = "P224"
-      + id                            = (known after apply)
-      + private_key_openssh           = (sensitive value)
-      + private_key_pem               = (sensitive value)
-      + private_key_pem_pkcs8         = (sensitive value)
-      + public_key_fingerprint_md5    = (known after apply)
-      + public_key_fingerprint_sha256 = (known after apply)
-      + public_key_openssh            = (known after apply)
-      + public_key_pem                = (known after apply)
-      + rsa_bits                      = 2048
-    }
-
-Plan: 28 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  + Cluster    = {
-      + id                 = (known after apply)
-      + kubernetes_version = "v1.28.2"
-      + name               = "FoggyKitchenOKECluster"
-    }
-  + KubeConfig = (known after apply)
-  + NodePool   = {
-      + id                 = [
-          + (known after apply),
-        ]
-      + kubernetes_version = [
-          + "v1.28.2",
-        ]
-      + name               = [
-          + "FoggyKitchenNodePool1",
-        ]
-      + nodes              = [
-          + (known after apply),
-        ]
-    }
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-(...)
-
-null_resource.deploy_oke_nginx: Still creating... [1m30s elapsed]
-null_resource.deploy_oke_nginx: Still creating... [1m40s elapsed]
-null_resource.deploy_oke_nginx: Still creating... [1m50s elapsed]
-null_resource.deploy_oke_nginx: Still creating... [2m0s elapsed]
-null_resource.deploy_oke_nginx: Provisioning with 'local-exec'...
-null_resource.deploy_oke_nginx (local-exec): Executing: ["/bin/sh" "-c" "kubectl describe pod nginx"]
-null_resource.deploy_oke_nginx (local-exec): Name:             nginx-deployment-56f584994d-6zx5j
-null_resource.deploy_oke_nginx (local-exec): Namespace:        default
-null_resource.deploy_oke_nginx (local-exec): Priority:         0
-null_resource.deploy_oke_nginx (local-exec): Service Account:  default
-null_resource.deploy_oke_nginx (local-exec): Node:             10.20.30.142/10.20.30.142
-null_resource.deploy_oke_nginx (local-exec): Start Time:       Thu, 22 Feb 2024 11:18:25 +0000
-null_resource.deploy_oke_nginx (local-exec): Labels:           app=nginx
-null_resource.deploy_oke_nginx (local-exec):                   pod-template-hash=56f584994d
-null_resource.deploy_oke_nginx (local-exec): Annotations:      <none>
-null_resource.deploy_oke_nginx (local-exec): Status:           Running
-null_resource.deploy_oke_nginx (local-exec): IP:               10.20.30.4
-null_resource.deploy_oke_nginx (local-exec): IPs:
-null_resource.deploy_oke_nginx (local-exec):   IP:           10.20.30.4
-null_resource.deploy_oke_nginx (local-exec): Controlled By:  ReplicaSet/nginx-deployment-56f584994d
-null_resource.deploy_oke_nginx (local-exec): Containers:
-null_resource.deploy_oke_nginx (local-exec):   nginx:
-null_resource.deploy_oke_nginx (local-exec):     Container ID:   cri-o://638a213d306fa73587a663fe0d6465551e38018bf41b551a01cc45b5ebc4c519
-null_resource.deploy_oke_nginx (local-exec):     Image:          nginx:1.14.2
-null_resource.deploy_oke_nginx (local-exec):     Image ID:       7bbc8783b8ecfdb6453396805cc0fb5fcdaf1b16cbb907c8ab1b8685732d50a4
-null_resource.deploy_oke_nginx (local-exec):     Port:           80/TCP
-null_resource.deploy_oke_nginx (local-exec):     Host Port:      0/TCP
-null_resource.deploy_oke_nginx (local-exec):     State:          Running
-null_resource.deploy_oke_nginx (local-exec):       Started:      Thu, 22 Feb 2024 11:19:25 +0000
-null_resource.deploy_oke_nginx (local-exec):     Ready:          True
-null_resource.deploy_oke_nginx (local-exec):     Restart Count:  0
-null_resource.deploy_oke_nginx (local-exec):     Requests:
-null_resource.deploy_oke_nginx (local-exec):       memory:     500Mi
-null_resource.deploy_oke_nginx (local-exec):     Environment:  <none>
-null_resource.deploy_oke_nginx (local-exec):     Mounts:
-null_resource.deploy_oke_nginx (local-exec):       /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-bccs5 (ro)
-null_resource.deploy_oke_nginx (local-exec):       /var/www/html from data (rw)
-null_resource.deploy_oke_nginx (local-exec): Conditions:
-null_resource.deploy_oke_nginx (local-exec):   Type              Status
-null_resource.deploy_oke_nginx (local-exec):   Initialized       True
-null_resource.deploy_oke_nginx (local-exec):   Ready             True
-null_resource.deploy_oke_nginx (local-exec):   ContainersReady   True
-null_resource.deploy_oke_nginx (local-exec):   PodScheduled      True
-null_resource.deploy_oke_nginx (local-exec): Volumes:
-null_resource.deploy_oke_nginx (local-exec):   data:
-null_resource.deploy_oke_nginx (local-exec):     Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
-null_resource.deploy_oke_nginx (local-exec):     ClaimName:  fkblockvolume
-null_resource.deploy_oke_nginx (local-exec):     ReadOnly:   false
-null_resource.deploy_oke_nginx (local-exec):   kube-api-access-bccs5:
-null_resource.deploy_oke_nginx (local-exec):     Type:                    Projected (a volume that contains injected data from multiple sources)
-null_resource.deploy_oke_nginx (local-exec):     TokenExpirationSeconds:  3607
-null_resource.deploy_oke_nginx (local-exec):     ConfigMapName:           kube-root-ca.crt
-null_resource.deploy_oke_nginx (local-exec):     ConfigMapOptional:       <nil>
-null_resource.deploy_oke_nginx (local-exec):     DownwardAPI:             true
-null_resource.deploy_oke_nginx (local-exec): QoS Class:                   Burstable
-null_resource.deploy_oke_nginx (local-exec): Node-Selectors:              kubernetes.io/arch=arm64
-null_resource.deploy_oke_nginx (local-exec): Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
-null_resource.deploy_oke_nginx (local-exec):                              node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
-null_resource.deploy_oke_nginx (local-exec): Events:
-null_resource.deploy_oke_nginx (local-exec):   Type    Reason                  Age   From                     Message
-null_resource.deploy_oke_nginx (local-exec):   ----    ------                  ----  ----                     -------
-null_resource.deploy_oke_nginx (local-exec):   Normal  Scheduled               110s  default-scheduler        Successfully assigned default/nginx-deployment-56f584994d-6zx5j to 10.20.30.142
-null_resource.deploy_oke_nginx (local-exec):   Normal  SuccessfulAttachVolume  99s   attachdetach-controller  AttachVolume.Attach succeeded for volume "csi-e23d650b-91ff-4137-982d-fd4d4d021d89"
-null_resource.deploy_oke_nginx (local-exec):   Normal  Pulling                 57s   kubelet                  Pulling image "nginx:1.14.2"
-null_resource.deploy_oke_nginx (local-exec):   Normal  Pulled                  50s   kubelet                  Successfully pulled image "nginx:1.14.2" in 7.094s (7.094s including waiting)
-null_resource.deploy_oke_nginx (local-exec):   Normal  Created                 50s   kubelet                  Created container nginx
-null_resource.deploy_oke_nginx (local-exec):   Normal  Started                 50s   kubelet                  Started container nginx
-
-null_resource.deploy_oke_nginx: Provisioning with 'local-exec'...
-null_resource.deploy_oke_nginx (local-exec): Executing: ["/bin/sh" "-c" "kubectl get services"]
-null_resource.deploy_oke_nginx (local-exec): NAME         TYPE           CLUSTER-IP      EXTERNAL-IP       PORT(S)             AGE
-null_resource.deploy_oke_nginx (local-exec): kubernetes   ClusterIP      10.96.0.1       <none>            443/TCP,12250/TCP   11m
-null_resource.deploy_oke_nginx (local-exec): lb-service   LoadBalancer   10.96.239.225   130.162.219.117   80:32324/TCP        2m2s
-null_resource.deploy_oke_nginx: Creation complete after 2m5s [id=6057806154138335972]
-
-Apply complete! Resources: 28 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-Cluster = {
-  "id" = "ocid1.cluster.oc1.eu-frankfurt-1.aaaaaaaavvdknn5schlm6opun5ezxrnzf53ca4itf4ylui6vxcnkynrdwz4q"
-  "kubernetes_version" = "v1.28.2"
-  "name" = "FoggyKitchenOKECluster"
-}
-KubeConfig = <<EOT
----
-apiVersion: v1
-kind: ""
-clusters:
-- name: cluster-cnkynrdwz4q
-  cluster:
-    server: https://158.180.49.170:6443
-    certificate-authority-data: LS0tLS1CRUdJTiBD(...)0tCg==
-users:
-- name: user-cnkynrdwz4q
-  user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1beta1
-      command: oci
-      args:
-      - ce
-      - cluster
-      - generate-token
-      - --cluster-id
-      - ocid1.cluster.oc1.eu-frankfurt-1.aaaaaaaavvdknn5schlm6opun5ezxrnzf53ca4itf4ylui6vxcnkynrdwz4q
-      - --region
-      - eu-frankfurt-1
-      env: []
-contexts:
-- name: context-cnkynrdwz4q
-  context:
-    cluster: cluster-cnkynrdwz4q
-    user: user-cnkynrdwz4q
-current-context: context-cnkynrdwz4q
-
-EOT
-NodePool = {
-  "id" = tolist([
-    "ocid1.nodepool.oc1.eu-frankfurt-1.aaaaaaaaeuwkmppnwkhkujlfegdnydtkrrzlfbye2rjin7l6bnxqdq2vzthq",
-  ])
-  "kubernetes_version" = tolist([
-    "v1.28.2",
-  ])
-  "name" = tolist([
-    "FoggyKitchenNodePool1",
-  ])
-  "nodes" = [
-    tolist([
-      "10.20.30.41",
-      "10.20.30.211",
-      "10.20.30.142",
-    ]),
-  ]
-}
-
+```bash
+terraform apply
 ```
 
-### Destroy the changes 
+With the current defaults, this lesson creates:
 
-Run the following command for destroying all resources:
+- an enhanced OKE cluster
+- a managed node pool
+- a VCN with public API and load balancer subnets plus a private node subnet
+- a Kubernetes StorageClass, PVC, Service, and NGINX Deployment
+- an OCI load balancer provisioned through Kubernetes Service integration
 
+When `pvc_from_existing_block_volume = true`, Terraform additionally creates an OCI block volume first and injects its ID into the PVC manifest.
+
+When `use_reserved_public_ip_for_lb = true`, Terraform additionally creates a reserved public IP for the load balancer frontend.
+
+When `lb_nsg = true`, Terraform additionally creates a dedicated OCI NSG for the load balancer and injects its OCID into the Service annotation.
+
+## Key Configuration
+
+Current cluster settings:
+
+- `cluster_type = "enhanced"`
+- `k8s_version = "v1.35.2"`
+- `node_linux_version = "8.10"`
+- `oci_vcn_ip_native = true`
+- `use_existing_vcn = true`
+
+Current storage defaults:
+
+- `pvc_from_existing_block_volume = true`
+- `block_volume_size = 50`
+- `fs_type = "ext4"`
+- `vpus_per_gb = 0`
+
+Current load balancer defaults:
+
+- `lb_shape = "flexible"`
+- `flex_lb_min_shape = 10`
+- `flex_lb_max_shape = 100`
+- `use_reserved_public_ip_for_lb = true`
+- `lb_nsg = true`
+
+## Outputs
+
+This lesson exports:
+
+- `KubeConfig`
+- `Cluster`
+- `NodePool`
+
+## Destroy
+
+To remove all resources created by this lesson:
+
+```bash
+terraform destroy
 ```
-martin_lin@codeeditor:lesson7_oke_block_volume_pvc (eu-frankfurt-1)$ terraform destroy
 
-data.template_file.nginx_deployment: Reading...
-data.template_file.nginx_deployment: Read complete after 0s [id=e8338d25ad6bc03b264552a9cc6b9020e244555c6f3c6edc2b30afa6347c1c44]
-local_file.nginx_deployment: Refreshing state... [id=daacc54085c4f86be24e42313b713188fe250a4f]
-module.fk-oke.tls_private_key.public_private_key_pair: Refreshing state... [id=a0d8d08f600145b9e1a27e09c39510dd245f7319]
-
-(...)
-
-Plan: 0 to add, 0 to change, 28 to destroy.
-
-(...)
-
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value: yes
-
-null_resource.deploy_nginx: Destroying... [id=7319859307512728147]
-null_resource.deploy_nginx: Provisioning with 'local-exec'...
-null_resource.deploy_nginx (local-exec): Executing: ["/bin/sh" "-c" "kubectl delete service lb-service"]
-null_resource.deploy_nginx (local-exec): service "lb-service" deleted
-oci_core_network_security_group_security_rule.FoggyKitchenOKELBSecurityEgressGroupRule[0]: Destroying... [id=3DEBCD]
-oci_core_network_security_group_security_rule.FoggyKitchenOKELBSecurityIngressGroupRules[0]: Destroying... [id=4D52EA]
-oci_core_network_security_group_security_rule.FoggyKitchenNSGRule12250: Destroying... [id=A1600C]
-oci_core_network_security_group_security_rule.FoggyKitchenNSGRule6443: Destroying... [id=EA3C09]
-oci_core_network_security_group_security_rule.FoggyKitchenNSGRule12250: Destruction complete after 0s
-oci_core_network_security_group_security_rule.FoggyKitchenOKELBSecurityEgressGroupRule[0]: Destruction complete after 0s
-oci_core_network_security_group_security_rule.FoggyKitchenOKELBSecurityIngressGroupRules[0]: Destruction complete after 0s
-oci_core_network_security_group_security_rule.FoggyKitchenNSGRule6443: Destruction complete after 0s
-(...)
-
-oci_core_subnet.FoggyKitchenOKEAPIEndpointSubnet: Destroying... [id=ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaajmlvwosnhm762oobaxentyllu2yp6qm4otnf52q6zt6wmsztmpaa]
-oci_core_subnet.FoggyKitchenOKELBSubnet: Destroying... [id=ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaawjioqx5hkokqclfesf6fpgn64davvpv6nsr3hji2kesktojezzba]
-oci_core_subnet.FoggyKitchenOKEAPIEndpointSubnet: Destruction complete after 1s
-oci_core_security_list.FoggyKitchenOKEAPIEndpointSecurityList: Destroying... [id=ocid1.securitylist.oc1.eu-frankfurt-1.aaaaaaaaif3padpaq6npikpxe7z5j7cloqgrit3e4nyx4pk7oeko5wrthyja]
-oci_core_security_list.FoggyKitchenOKEAPIEndpointSecurityList: Destruction complete after 1s
-oci_core_subnet.FoggyKitchenOKELBSubnet: Destruction complete after 2s
-oci_core_route_table.FoggyKitchenVCNPublicRouteTable: Destroying... [id=ocid1.routetable.oc1.eu-frankfurt-1.aaaaaaaawz7hej2gwt67oc6ma4kytm4cfxc7mcod7zbviptiiovvr7pm7zhq]
-oci_core_route_table.FoggyKitchenVCNPublicRouteTable: Destruction complete after 0s
-oci_core_internet_gateway.FoggyKitchenInternetGateway: Destroying... [id=ocid1.internetgateway.oc1.eu-frankfurt-1.aaaaaaaapf6wvkthj2zpgnwknqffeeuxxesqct35y2ay5izcpujz3zjwqeka]
-oci_core_internet_gateway.FoggyKitchenInternetGateway: Destruction complete after 1s
-oci_core_virtual_network.FoggyKitchenVCN: Destroying... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giafrmpfjgtkviqrsg47bic5wq6wmiobbh3rvs6admbyvpa]
-oci_core_virtual_network.FoggyKitchenVCN: Destruction complete after 0s
-
-Destroy complete! Resources: 28 destroyed.
-
-```
-
+If you used the deployment path, allow extra time for the `local-exec` cleanup flow, OCI load balancer teardown, and PVC-related reconciliation.
 
 ## Contributing
-This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
+
+This project is open source. Contributions are welcome through pull requests.
 
 ## License
+
 Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
 
 Licensed under the Universal Permissive License (UPL), Version 1.0.
 
-See [LICENSE](LICENSE) for more details.
+See [LICENSE](LICENSE) for details.
