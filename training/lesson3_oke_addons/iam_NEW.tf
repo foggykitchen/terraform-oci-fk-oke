@@ -1,5 +1,5 @@
 module "fk_policy_adbs_instance_principal" {
-  source = "github.com/mlinxfeld/terraform-oci-fk-policy"
+  source = "github.com/foggykitchen/terraform-oci-fk-policy"
 
   providers = {
     oci = oci.homeregion

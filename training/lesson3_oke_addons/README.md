@@ -32,7 +32,7 @@ When `deploy_adbs = true`, lesson 3 also creates:
 - a dynamic group for OKE worker nodes
 - a tenancy-level OCI policy for ADBS access
 
-That IAM wiring is delegated to `github.com/mlinxfeld/terraform-oci-fk-policy` in [iam_NEW.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson3_oke_addons/iam_NEW.tf).
+That IAM wiring is delegated to `github.com/foggykitchen/terraform-oci-fk-policy` in [iam_NEW.tf](/Users/mlinxfeld/codes/terraform-oci-fk-oke/training/lesson3_oke_addons/iam_NEW.tf).
 
 ## Deploy Using Terraform CLI
 
