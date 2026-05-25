@@ -6,7 +6,7 @@ This lesson adds the OKE cluster autoscaler to the enhanced cluster example. It 
 
 ## Deploy Using Oracle Resource Manager
 
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/mlinxfeld/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson5.zip)
+1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/foggykitchen/terraform-oci-fk-oke/releases/latest/download/terraform-oci-fk-oke-lesson5.zip)
 
     If you aren't already signed in, when prompted, enter the tenancy and user credentials.
 
@@ -32,7 +32,7 @@ Now, you'll want a local copy of this repo. You can make that with the commands:
 Clone the repo from github by executing the command as follows and then go to proper subdirectory:
 
 ```
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ git clone https://github.com/mlinxfeld/terraform-oci-fk-oke.git
+martin_lin@codeeditor:~ (eu-frankfurt-1)$ git clone https://github.com/foggykitchen/terraform-oci-fk-oke.git
 
 martin_lin@codeeditor:~ (eu-frankfurt-1)$ cd terraform-oci-fk-oke
 
@@ -61,7 +61,7 @@ martin_lin@codeeditor:lesson5_oke_autoscaler (eu-frankfurt-1)$ terraform init
 
 Initializing the backend...
 Initializing modules...
-Downloading git::https://github.com/mlinxfeld/terraform-oci-fk-oke.git for fk-oke...
+Downloading git::https://github.com/foggykitchen/terraform-oci-fk-oke.git for fk-oke...
 - fk-oke in .terraform/modules/fk-oke
 
 Initializing provider plugins...

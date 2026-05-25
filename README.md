@@ -90,7 +90,7 @@ Each lesson folder is runnable on its own and shows a narrower scenario built on
 
 ```hcl
 module "oke" {
-  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-oke.git"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-oke.git"
 
   compartment_ocid     = var.compartment_ocid
   tenancy_ocid         = var.tenancy_ocid

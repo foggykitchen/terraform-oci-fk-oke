@@ -1,5 +1,5 @@
 module "fk-oke" {
-  source                        = "github.com/mlinxfeld/terraform-oci-fk-oke"
+  source                        = "github.com/foggykitchen/terraform-oci-fk-oke"
   tenancy_ocid                  = var.tenancy_ocid      # Our tenancy OCID     
   compartment_ocid              = var.compartment_ocid  # Compartment OCID where OKE and network will be deployed
   cluster_type                  = "basic"               # Basic cluster
@@ -13,4 +13,3 @@ module "fk-oke" {
   is_lb_subnet_public           = true                  # OKE LoadBalanacer will be public (Internet facing)
   is_nodepool_subnet_public     = true                  # OKE NodePool will be public (Internet facing)
 }
-

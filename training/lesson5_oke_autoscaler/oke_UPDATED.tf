@@ -1,6 +1,6 @@
 module "fk-oke" {
   providers                             = { oci = oci.targetregion }
-  source                                = "github.com/mlinxfeld/terraform-oci-fk-oke"
+  source                                = "github.com/foggykitchen/terraform-oci-fk-oke"
   tenancy_ocid                          = var.tenancy_ocid
   region                                = var.region 
   compartment_ocid                      = var.compartment_ocid
@@ -21,4 +21,3 @@ module "fk-oke" {
   autoscaler_scale_down_delay_after_add = "5m" # This specifies the delay after adding a new node before it can be considered for scaling down. It's useful to prevent too-rapid scaling actions.
   autoscaler_scale_down_unneeded_time   = "5m" # How long a node should be unneeded before it's eligible for scale down 
 }
-
