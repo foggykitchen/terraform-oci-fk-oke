@@ -1,8 +1,8 @@
 # terraform-oci-fk-oke
 
-This repository contains a reusable Terraform module and progressive training examples for deploying Oracle Container Engine for Kubernetes (OKE) on Oracle Cloud Infrastructure (OCI).
+This repository contains a reusable **Terraform / OpenTofu module** and progressive training examples for deploying **Oracle Container Engine for Kubernetes (OKE)** on **Oracle Cloud Infrastructure (OCI)**.
 
-It is part of the FoggyKitchen training ecosystem and is meant to stay composable: the root module focuses on cluster infrastructure, while the `training/` folder contains self-contained lesson examples.
+It is part of the [FoggyKitchen.com](https://foggykitchen.com) training ecosystem and is designed as a composable OKE layer that can be combined with networking, policy, storage, registry, and observability modules.
 
 ---
 
@@ -24,7 +24,7 @@ This is not a full landing zone module. Networking, cluster settings, and add-on
 
 ---
 
-## What The Module Does
+## What the module does
 
 Depending on the configuration, the module can create:
 
@@ -90,13 +90,13 @@ Each lesson folder is runnable on its own and shows a narrower scenario built on
 
 ```hcl
 module "oke" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-oke.git"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-oke.git?ref=v0.1.0"
 
   compartment_ocid     = var.compartment_ocid
   tenancy_ocid         = var.tenancy_ocid
   oke_cluster_name     = "fk-oke-demo"
   cluster_type         = "enhanced"
-  k8s_version          = "v1.31.1"
+  k8s_version          = "v1.35.2"
 
   use_existing_vcn     = false
   use_existing_nsg     = false
@@ -151,7 +151,7 @@ module "oke" {
 | `is_api_endpoint_subnet_public` | bool | `false` | Make the API endpoint subnet public |
 | `is_lb_subnet_public` | bool | `false` | Make the load balancer subnet public |
 | `is_nodepool_subnet_public` | bool | `false` | Make the node pool subnet public |
-| `k8s_version` | string | `v1.31.1` | Kubernetes version |
+| `k8s_version` | string | `v1.35.2` | Kubernetes version |
 | `pool_name` | string | `FoggyKitchenNodePool` | Node pool name prefix |
 | `node_shape` | string | `VM.Standard.E4.Flex` | Shape used for node pools |
 | `node_pool_image_id` | string | `""` | Custom image OCID when `node_pool_image_type = "custom"` |
@@ -225,14 +225,22 @@ module "oke" {
 ## Related Resources
 
 - [Training examples](training)
-- [FoggyKitchen.com](https://foggykitchen.com/)
+- [FoggyKitchen OCI VCN Module](https://github.com/foggykitchen/terraform-oci-fk-vcn)
+- [FoggyKitchen OCI NSG Module](https://github.com/foggykitchen/terraform-oci-fk-nsg)
+- [FoggyKitchen OCI Public IP Module](https://github.com/foggykitchen/terraform-oci-fk-public-ip)
+- [FoggyKitchen OCI Policy Module](https://github.com/foggykitchen/terraform-oci-fk-policy)
+- [FoggyKitchen OCI Block Volume Module](https://github.com/foggykitchen/terraform-oci-fk-blockvolume)
+- [FoggyKitchen OCI File Storage Module](https://github.com/foggykitchen/terraform-oci-fk-filestorage)
+- [FoggyKitchen OCI OCIR Module](https://github.com/foggykitchen/terraform-oci-fk-ocir)
+- [FoggyKitchen OCI Logging Module](https://github.com/foggykitchen/terraform-oci-fk-logging)
 
 ---
 
 ## License
 
-Copyright (c) 2026 [FoggyKitchen.com](https://foggykitchen.com/)
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](LICENSE) for details.
 
-Licensed under the Universal Permissive License (UPL), Version 1.0.
+---
 
-See [LICENSE](LICENSE) for more details.
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.

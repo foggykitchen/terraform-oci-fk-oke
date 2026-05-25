@@ -6,7 +6,7 @@ It builds directly on Lesson 1. The main difference is that the cluster runs in 
 
 ---
 
-## Architecture Overview
+## What This Lesson Shows
 
 ![](terraform-oci-fk-oke-lesson2-architecture.png)
 
@@ -26,7 +26,7 @@ The OKE module then consumes the resulting subnet and VCN IDs through `use_exist
 
 ---
 
-## OCI Console View
+## Architecture Notes
 
 The following screenshot shows the created OKE resources in OCI Console:
 
@@ -94,7 +94,16 @@ The important settings are:
 
 ---
 
-## Deployment Steps
+## Deploy Using Terraform CLI
+
+### Clone The Repository
+
+```bash
+git clone https://github.com/foggykitchen/terraform-oci-fk-oke.git
+cd terraform-oci-fk-oke/training/lesson2_oke_enhanced_cluster
+```
+
+### Initialize OpenTofu
 
 Use OpenTofu from the lesson directory:
 
@@ -109,7 +118,7 @@ This lesson is intentionally limited to planning so that you can inspect the enh
 
 ---
 
-## Cleanup
+## Destroy
 
 If you apply the example later outside the scope of this lesson and want to remove everything created by it:
 
@@ -119,7 +128,7 @@ tofu destroy
 
 ---
 
-## Summary
+## Key Takeaways
 
 This example demonstrates:
 
@@ -130,13 +139,17 @@ This example demonstrates:
 
 ---
 
-## Learn More
+## Contributing
 
-Visit [FoggyKitchen.com](https://foggykitchen.com/) for OCI, multicloud, and Terraform learning resources, including the full [OCI Kubernetes Course](https://foggykitchen.com/courses/oci-kubernetes-course/).
+This project is open source. Contributions are welcome through pull requests.
 
 ---
 
 ## License
 
-Licensed under the Universal Permissive License (UPL), Version 1.0.
-See [LICENSE](../../LICENSE) for more details.
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](../../LICENSE) for details.
+
+---
+
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.

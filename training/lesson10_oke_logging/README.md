@@ -121,7 +121,7 @@ This project is open source. Contributions are welcome through pull requests.
 ## License
 
 Licensed under the **Universal Permissive License (UPL), Version 1.0**.
-See [LICENSE](LICENSE) for details.
+See [LICENSE](../../LICENSE) for details.
 
 ---
 
