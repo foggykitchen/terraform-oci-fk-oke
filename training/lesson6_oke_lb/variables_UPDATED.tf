@@ -6,7 +6,7 @@ variable "region" {}
 variable "fingerprint" {}
 
 variable "number_of_nginx_replicas" {
-   default = 10
+  default = 10
 }
 
 variable "lb_shape" {
@@ -30,7 +30,7 @@ variable "lb_listener_port" {
 }
 
 variable "lb_nsg" {
-  default = true  
+  default = true
 }
 
 variable "network_cidrs" {
