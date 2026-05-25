@@ -46,7 +46,7 @@ The lesson is split into two reusable modules:
 
 ```hcl
 module "fk-vcn" {
-  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-vcn.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.1.0"
 
   compartment_ocid = var.compartment_ocid
   name             = "foggykitchen-vcn"
