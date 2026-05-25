@@ -10,7 +10,7 @@ variable "availablity_domain_name" {
 }
 
 variable "number_of_nginx_replicas" {
-   default = 10
+  default = 10
 }
 
 variable "oke_node_shape" {
@@ -53,9 +53,9 @@ variable "network_cidrs" {
   }
 }
 
-variable "pvc_from_existing_block_volume" { 
+variable "pvc_from_existing_block_volume" {
   description = "Existing (true) means created by Terraform, in opposite (false) it will be create from with K8S."
-  default = true
+  default     = true
 }
 
 variable "block_volume_name" {
@@ -68,15 +68,14 @@ variable "block_volume_size" {
 
 variable "fs_type" {
   default = "ext4"
-#  default = "ext3"  
-#  default = "xfs"
+  #  default = "ext3"  
+  #  default = "xfs"
 }
 
 variable "vpus_per_gb" {
-  default = "0" # Lower Cost 
-#  default = "10" # Balanced
-#  default = "20" # Higher Performance
-#  default = "30" # Ultra High Performance 
+  default = 0 # Lower Cost 
+  #  default = "10" # Balanced
+  #  default = "20" # Higher Performance
+  #  default = "30" # Ultra High Performance 
 }
-
 
