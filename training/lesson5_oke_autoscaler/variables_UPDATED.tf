@@ -14,7 +14,7 @@ variable "autoscaler_authtype_workload" {
 }
 
 variable "kubernetes_version" {
-  default = "v1.31.1"
+  default = "v1.35.2"
 }
 
 variable "node_linux_version" {
@@ -32,4 +32,3 @@ variable "min_number_of_nodes" {
 variable "max_number_of_nodes" {
   default = 5
 }
-
