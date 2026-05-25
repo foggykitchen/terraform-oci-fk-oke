@@ -1,22 +1,18 @@
-resource "oci_logging_log_group" "oke_log_group" {
-    compartment_id = var.compartment_ocid
-    display_name = "oke_log_group"
-    description = "Logging Group for OKE logs"
-}
+module "fk_logging" {
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-logging.git?ref=v0.1.0"
 
-resource "oci_logging_log" "oke_log" {
-  display_name = "oke_log"
-  log_group_id = oci_logging_log_group.oke_log_group.id
-  log_type = "SERVICE"
+  compartment_ocid      = var.compartment_ocid
+  log_group_name        = "oke_log_group"
+  log_group_description = "Logging Group for OKE logs"
 
-  configuration {
-    source {
-      category = "all-service-logs"
-      service = "oke-k8s-cp-prod"
-      source_type = "OCISERVICE"
-      resource = module.fk-oke.cluster.id
+  service_logs = {
+    oke_control_plane = {
+      display_name = "oke_log"
+      source = {
+        category = "all-service-logs"
+        service  = "oke-k8s-cp-prod"
+        resource = module.fk-oke.cluster.id
+      }
     }
-    compartment_id = var.compartment_ocid
   }
-  is_enabled = true
 }

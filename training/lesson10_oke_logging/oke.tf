@@ -1,15 +1,16 @@
 module "fk-oke" {
-  source                        = "github.com/foggykitchen/terraform-oci-fk-oke"
-  tenancy_ocid                  = var.tenancy_ocid      # Our tenancy OCID     
-  compartment_ocid              = var.compartment_ocid  # Compartment OCID where OKE and network will be deployed
-  cluster_type                  = "basic"               # Basic cluster
-  k8s_version                   = "v1.31.1"
-  node_linux_version            = "8.10"
-  node_shape                    = "VM.Standard.A1.Flex" # OCI Free Tier
-  node_ocpus                    = 1                     # OCI Free Tier
-  node_memory                   = 4                     # OCI Free Tier
-  use_existing_vcn              = false                 # Module itself will create all necessary network resources
-  is_api_endpoint_subnet_public = true                  # OKE API Endpoint will be public (Internet facing)
-  is_lb_subnet_public           = true                  # OKE LoadBalanacer will be public (Internet facing)
-  is_nodepool_subnet_public     = true                  # OKE NodePool will be public (Internet facing)
+  source             = "../.."
+  tenancy_ocid       = var.tenancy_ocid     # Our tenancy OCID
+  compartment_ocid   = var.compartment_ocid # Compartment OCID where OKE and network will be deployed
+  cluster_type       = "basic"              # Basic cluster
+  k8s_version        = "v1.35.2"
+  node_linux_version = "8.10"
+  node_shape         = "VM.Standard.A1.Flex" # OCI Free Tier
+  node_ocpus         = 1                     # OCI Free Tier
+  node_memory        = 4                     # OCI Free Tier
+  use_existing_vcn   = false                 # Module itself will create all necessary network resources
+
+  is_api_endpoint_subnet_public = true # OKE API Endpoint will be public (Internet facing)
+  is_lb_subnet_public           = true # OKE LoadBalanacer will be public (Internet facing)
+  is_nodepool_subnet_public     = true # OKE NodePool will be public (Internet facing)
 }
