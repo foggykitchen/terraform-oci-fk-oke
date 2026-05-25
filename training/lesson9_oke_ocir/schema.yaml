@@ -26,7 +26,6 @@ variableGroups:
       and:
         - show_advanced
   variables:
-  - kubernetes_version
   - oke_node_shape
   - oke_node_shape_memory
   - oke_node_shape_ocpus
@@ -49,9 +48,7 @@ variableGroups:
       and:
         - show_advanced
   variables:
-  - ocir_namespace
   - ocir_repo_name
-  - ocir_docker_repository
   - ocir_user_email
 
 variables:
@@ -139,7 +136,7 @@ variables:
     minimum: 1
     maximum: 128
     multipleOf: 1
-    default: 6
+    default: 4
     title: "OKE Node Flex Shape Memory (GB)"
     description: "Choose number GB for Flex Shape Memory."
     visible:
@@ -223,7 +220,7 @@ variables:
     title: "Use Reserved Public IP for OKE Load Balancer?"
     description: "Check if you want to use Reserved Public IP for OKE Load Balancer."
     visible: true
-    default: false
+    default: true
 
   lb_nsg:
     type: boolean
@@ -232,22 +229,10 @@ variables:
     visible: true
     default: true
 
-  ocir_namespace:
-    type: string
-    title: "OCIR Namespace"
-    description: "Choose OCIR Namespace."
-    required: false
-
   ocir_repo_name:
     type: string
     title: "OCIR Repo Name"
     description: "Choose OCIR Repo Name."
-    required: false
-
-  ocir_docker_repository:
-    type: string
-    title: "OCIR Docker Repository"
-    description: "Choose OCIR Docker Repository."
     required: false
 
   ocir_user_email:

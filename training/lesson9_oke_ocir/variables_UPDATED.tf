@@ -8,7 +8,7 @@ variable "ocir_user_name" {}
 variable "ocir_user_password" {}
 
 variable "number_of_nginx_replicas" {
-   default = 10
+  default = 10
 }
 
 variable "oke_node_shape" {
@@ -59,16 +59,8 @@ variable "network_cidrs" {
   }
 }
 
-variable "ocir_namespace" {
-  default = ""
-}
-
 variable "ocir_repo_name" {
   default = "fknginx"
-}
-
-variable "ocir_docker_repository" {
-  default = ""
 }
 
 variable "ocir_user_email" {
