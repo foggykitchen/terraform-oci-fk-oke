@@ -4,6 +4,8 @@ This repository contains a reusable **Terraform / OpenTofu module** and progress
 
 It is part of the [FoggyKitchen.com](https://foggykitchen.com) training ecosystem and is designed as a composable OKE layer that can be combined with networking, policy, storage, registry, and observability modules.
 
+Support expectations are documented in [SUPPORT.md](SUPPORT.md).
+
 ---
 
 ## Purpose
