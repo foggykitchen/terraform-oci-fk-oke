@@ -22,6 +22,7 @@ The 2026 codebase prefers reusable `terraform-oci-fk-oke` module composition ove
 | 08 | [**Cluster with OCI File Storage PVC**](lesson8_oke_fss_pvc/) | File Storage Service-based persistent storage |
 | 09 | [**Cluster with OCIR Image Pull**](lesson9_oke_ocir/) | OCI Registry integration and private image pull path |
 | 10 | [**Basic Cluster with OCI Logging**](lesson10_oke_logging/) | Logging, observability, and workload traces |
+| 11 | [**Enhanced Cluster with KMS Secret Encryption**](lesson11_oke_kms_encryption/) | OCI Vault KMS key for Kubernetes Secrets encryption |
 
 ---
 
@@ -44,7 +45,7 @@ terraform apply
 
 The lessons can be applied independently, but the recommended approach is sequential:
 
-01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10
+01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11
 
 ---
 

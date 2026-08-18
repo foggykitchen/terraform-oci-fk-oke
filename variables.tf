@@ -70,6 +70,12 @@ variable "oke_cluster_name" {
   default = "FoggyKitchenOKECluster"
 }
 
+variable "kms_key_id" {
+  description = "Optional OCI Vault KMS key OCID used as the customer-managed master encryption key for Kubernetes secret encryption."
+  type        = string
+  default     = null
+}
+
 variable "vcn_native" {
   default = true
 }

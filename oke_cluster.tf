@@ -8,6 +8,7 @@ resource "oci_containerengine_cluster" "fk_oke_cluster" {
   name               = var.oke_cluster_name
   vcn_id             = var.use_existing_vcn ? var.vcn_id : oci_core_vcn.fk_oke_vcn[0].id
   type               = lookup({"basic"="BASIC_CLUSTER","enhanced"="ENHANCED_CLUSTER"}, lower(var.cluster_type), "ENHANCED_CLUSTER")
+  kms_key_id         = var.kms_key_id
 
   dynamic "endpoint_config" {
     for_each = var.vcn_native ? [1] : []
@@ -46,4 +47,3 @@ resource "oci_containerengine_cluster" "fk_oke_cluster" {
     }
   }
 }
-
