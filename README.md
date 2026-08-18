@@ -18,6 +18,7 @@ The goal of this module is to provide a clear, reusable reference implementation
 
 - OKE cluster provisioning
 - Basic and enhanced cluster modes
+- Optional customer-managed encryption key for Kubernetes Secrets stored in etcd
 - Optional VCN creation or integration with an existing VCN
 - Optional subnet creation for the cluster endpoint, node pool, and load balancer
 - VCN-native pod networking for node pools
@@ -51,6 +52,7 @@ The module intentionally does not create:
 - Kubernetes manifests
 - Persistent volume claims or workload-specific storage resources
 - Bastion hosts
+- OCI Vaults, KMS keys, or IAM policies for customer-managed encryption
 - External observability backends outside the module API
 
 Those concerns belong in dedicated examples or separate modules.
@@ -85,7 +87,8 @@ terraform-oci-fk-oke/
     ├── lesson7_oke_block_volume_pvc/
     ├── lesson8_oke_fss_pvc/
     ├── lesson9_oke_ocir/
-    └── lesson10_oke_logging/
+    ├── lesson10_oke_logging/
+    └── lesson11_oke_kms_encryption/
 ```
 
 Each lesson folder is runnable on its own and shows a narrower scenario built on top of the same OKE foundation.
@@ -153,6 +156,7 @@ module "oke" {
 | `pods_subnet_id` | string | `""` | Existing pod subnet OCID for VCN-native mode |
 | `pods_nsg_ids` | list(string) | `[]` | NSG IDs for pod networking in VCN-native mode |
 | `oke_cluster_name` | string | `FoggyKitchenOKECluster` | OKE cluster name |
+| `kms_key_id` | string | `null` | Optional OCI Vault KMS key OCID used as the customer-managed master encryption key for Kubernetes secret encryption |
 | `vcn_native` | bool | `true` | Enable VCN-native cluster endpoint and subnet handling |
 | `is_api_endpoint_subnet_public` | bool | `false` | Make the API endpoint subnet public |
 | `is_lb_subnet_public` | bool | `false` | Make the load balancer subnet public |
@@ -225,6 +229,9 @@ module "oke" {
 - `pods_subnet_cidr` is currently unused in the root module and appears to be reserved for training scenarios.
 - `region` is present in `variables.tf`, but the provider config is expected to supply region in the usual Terraform way.
 - `cluster_type` is validated and accepts only `basic` or `enhanced`.
+- `kms_key_id` maps directly to the top-level `kms_key_id` argument on `oci_containerengine_cluster`. The current Oracle OCI provider documentation describes it as the KMS key OCID used as the master encryption key for Kubernetes secret encryption. OCI OKE documentation describes this as encrypting Kubernetes Secrets at rest in the cluster's etcd key-value store using envelope encryption. This module does not configure unrelated image signature verification keys, persistent volume encryption keys, or a general etcd encryption setting beyond that documented Kubernetes Secrets behavior.
+- To create a customer-managed key, compose this module with [terraform-oci-fk-vault](https://github.com/foggykitchen/terraform-oci-fk-vault) and pass one of its `key_ids` outputs to `kms_key_id`.
+- Before creating an OKE cluster with `kms_key_id`, IAM must authorize the cluster principal to use the Vault key. OCI documents the policy pattern as `Allow any-user to use keys in compartment <key-compartment-name> where ALL {request.principal.type = 'cluster', target.key.id = '<key-ocid>'}`. Keep that policy in the calling layer, for example with [terraform-oci-fk-policy](https://github.com/foggykitchen/terraform-oci-fk-policy), because this OKE module intentionally does not own IAM policy lifecycle.
 
 ---
 
@@ -233,6 +240,7 @@ module "oke" {
 - [Training examples](training)
 - [FoggyKitchen OCI VCN Module](https://github.com/foggykitchen/terraform-oci-fk-vcn)
 - [FoggyKitchen OCI NSG Module](https://github.com/foggykitchen/terraform-oci-fk-nsg)
+- [FoggyKitchen OCI Vault Module](https://github.com/foggykitchen/terraform-oci-fk-vault)
 - [FoggyKitchen OCI Public IP Module](https://github.com/foggykitchen/terraform-oci-fk-public-ip)
 - [FoggyKitchen OCI Policy Module](https://github.com/foggykitchen/terraform-oci-fk-policy)
 - [FoggyKitchen OCI Block Volume Module](https://github.com/foggykitchen/terraform-oci-fk-blockvolume)

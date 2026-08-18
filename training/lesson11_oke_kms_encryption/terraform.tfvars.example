@@ -1,0 +1,6 @@
+tenancy_ocid       = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
+user_ocid          = "ocid1.user.oc1..<your_user_ocid>"
+compartment_ocid   = "ocid1.compartment.oc1..<your_compartment_ocid>"
+region             = "<oci_region>"
+fingerprint        = "<fingerprint>"
+private_key_path   = "<private_key_path>"
