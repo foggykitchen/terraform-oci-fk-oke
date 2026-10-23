@@ -179,6 +179,11 @@ This project is open source. Contributions are welcome through pull requests.
 
 ---
 
+## Related technical articles
+
+- [OKE Secret Encryption with OCI Vault: From Terraform Module to Lab and AI Skills](https://foggykitchen.com/2026/08/24/oke-secret-encryption-oci-vault-terraform/)
+  — Understand OCI Vault keys, cluster IAM and customer-managed encryption of Kubernetes Secrets at rest.
+
 ## License
 
 Licensed under the **Universal Permissive License (UPL), Version 1.0**.
