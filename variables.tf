@@ -247,7 +247,7 @@ variable "is_force_delete_after_grace_duration" {
 }
 
 variable "fk_oke_addon_map" {
-   type = map(object({
+  type = map(object({
     configurations = map(object({
       config_value = string
     }))

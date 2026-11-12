@@ -20,7 +20,7 @@ data "oci_identity_availability_domains" "ADs" {
 }
 
 data "oci_identity_availability_domains" "AD" {
-  compartment_id  = var.tenancy_ocid
+  compartment_id = var.tenancy_ocid
 
   filter {
     name   = "name"
@@ -35,10 +35,10 @@ data "oci_containerengine_cluster_kube_config" "KubeConfig" {
 }
 
 data "oci_containerengine_addons" "fk_oke_cluster_addons" {
-    cluster_id = oci_containerengine_cluster.fk_oke_cluster.id
+  cluster_id = oci_containerengine_cluster.fk_oke_cluster.id
 }
 
 data "oci_containerengine_addon_options" "fk_oke_addon_options" {
-    kubernetes_version = var.k8s_version
+  kubernetes_version = var.k8s_version
 }
 

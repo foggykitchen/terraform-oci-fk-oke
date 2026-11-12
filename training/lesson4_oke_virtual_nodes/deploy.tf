@@ -1,5 +1,5 @@
 resource "local_file" "nginx_deployment" {
-  content  = templatefile("${path.module}/manifest/nginx.template.yaml", {
+  content = templatefile("${path.module}/manifest/nginx.template.yaml", {
     number_of_nginx_replicas = var.number_of_nginx_replicas
   })
   filename = "${path.module}/nginx.yaml"
@@ -7,8 +7,8 @@ resource "local_file" "nginx_deployment" {
 
 resource "null_resource" "deploy_nginx" {
   depends_on = [
-  module.fk-oke.cluster,
-  module.fk-oke.node_pool, 
+    module.fk-oke.cluster,
+    module.fk-oke.node_pool,
   local_file.nginx_deployment]
 
   provisioner "local-exec" {

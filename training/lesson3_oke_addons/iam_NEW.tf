@@ -1,5 +1,5 @@
 module "fk_policy_adbs_instance_principal" {
-  source = "github.com/foggykitchen/terraform-oci-fk-policy"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.2.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.homeregion

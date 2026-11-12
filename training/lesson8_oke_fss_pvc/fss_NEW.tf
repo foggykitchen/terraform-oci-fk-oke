@@ -1,5 +1,5 @@
 module "fk_filestorage" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-filestorage.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-filestorage.git?ref=v0.2.0" # TODO: tag not yet released
 
   compartment_ocid    = var.compartment_ocid
   availability_domain = var.availablity_domain_name == "" ? data.oci_identity_availability_domains.ADs.availability_domains[0].name : var.availablity_domain_name

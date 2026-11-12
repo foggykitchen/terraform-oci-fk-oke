@@ -9,10 +9,10 @@ module "fk-oke" {
   node_linux_version            = "8.10"
   oci_vcn_ip_native             = true
   use_existing_vcn              = false
-  is_api_endpoint_subnet_public = true # OKE API Endpoint will be public (Internet facing)
-  is_lb_subnet_public           = true # OKE LoadBalanacer will be public (Internet facing)
+  is_api_endpoint_subnet_public = true  # OKE API Endpoint will be public (Internet facing)
+  is_lb_subnet_public           = true  # OKE LoadBalanacer will be public (Internet facing)
   is_nodepool_subnet_public     = false # OKE NodePool will be private (not-Internet facing)
-  virtual_node_pool             = true # Using Virtual Node Pool instead of Managed Node Pool
+  virtual_node_pool             = true  # Using Virtual Node Pool instead of Managed Node Pool
   pool_name                     = var.pool_name
-  virtual_nodepool_pod_shape    = var.virtual_nodepool_pod_shape  
+  virtual_nodepool_pod_shape    = var.virtual_nodepool_pod_shape
 }

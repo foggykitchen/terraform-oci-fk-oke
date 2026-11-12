@@ -1,0 +1,26 @@
+name: OCI 9 compatibility
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        root: [".", "training/lesson10_oke_logging", "training/lesson11_oke_kms_encryption", "training/lesson1_oke_basic_cluster", "training/lesson2_oke_enhanced_cluster", "training/lesson3_oke_addons", "training/lesson4_oke_virtual_nodes", "training/lesson5_oke_autoscaler", "training/lesson6_oke_lb", "training/lesson7_oke_block_volume_pvc", "training/lesson8_oke_fss_pvc", "training/lesson9_oke_ocir"]
+    env:
+      TF_IN_AUTOMATION: "1"
+      TF_INPUT: "0"
+      OCI9_ALLOW_UNRELEASED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.11.6
+          tofu_wrapper: false
+      - name: Format, initialize, validate and mocked plan
+        run: python3 scripts/oci9_check.py --root '${{ matrix.root }}'

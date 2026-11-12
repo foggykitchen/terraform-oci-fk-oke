@@ -7,7 +7,7 @@ resource "oci_containerengine_cluster" "fk_oke_cluster" {
   kubernetes_version = var.k8s_version
   name               = var.oke_cluster_name
   vcn_id             = var.use_existing_vcn ? var.vcn_id : oci_core_vcn.fk_oke_vcn[0].id
-  type               = lookup({"basic"="BASIC_CLUSTER","enhanced"="ENHANCED_CLUSTER"}, lower(var.cluster_type), "ENHANCED_CLUSTER")
+  type               = lookup({ "basic" = "BASIC_CLUSTER", "enhanced" = "ENHANCED_CLUSTER" }, lower(var.cluster_type), "ENHANCED_CLUSTER")
   kms_key_id         = var.kms_key_id
 
   dynamic "endpoint_config" {
@@ -20,10 +20,10 @@ resource "oci_containerengine_cluster" "fk_oke_cluster" {
   }
 
   dynamic "cluster_pod_network_options" {
-      for_each = var.oci_vcn_ip_native == true ? [1] : []
-      content {
-          cni_type = "OCI_VCN_IP_NATIVE"
-      }
+    for_each = var.oci_vcn_ip_native == true ? [1] : []
+    content {
+      cni_type = "OCI_VCN_IP_NATIVE"
+    }
   }
 
   options {
@@ -40,10 +40,10 @@ resource "oci_containerengine_cluster" "fk_oke_cluster" {
 
     dynamic "kubernetes_network_config" {
       for_each = var.oci_vcn_ip_native == true ? [] : [1]
-        content {
-            pods_cidr     = var.pods_cidr
-            services_cidr = var.services_cidr
-        }
+      content {
+        pods_cidr     = var.pods_cidr
+        services_cidr = var.services_cidr
+      }
     }
   }
 }
