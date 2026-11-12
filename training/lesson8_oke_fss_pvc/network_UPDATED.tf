@@ -367,7 +367,7 @@ module "fk_public_ip_lb" {
 
 module "fk_nsg_lb" {
   count  = var.lb_nsg ? 1 : 0
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.1.0"
 
   name             = "fk-lb-nsg"
   compartment_ocid = var.compartment_ocid
