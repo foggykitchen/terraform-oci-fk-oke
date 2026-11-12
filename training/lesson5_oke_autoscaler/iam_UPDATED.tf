@@ -1,5 +1,5 @@
 module "fk_policy_autoscaler_workload_identity_principal" {
-  source = "github.com/foggykitchen/terraform-oci-fk-policy"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.1.0"
 
   providers = {
     oci = oci.homeregion
@@ -25,7 +25,7 @@ module "fk_policy_autoscaler_workload_identity_principal" {
 }
 
 module "fk_policy_autoscaler_instance_principal" {
-  source = "github.com/foggykitchen/terraform-oci-fk-policy"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.1.0"
 
   providers = {
     oci = oci.homeregion
