@@ -18,7 +18,7 @@ module "fk-oke" {
   is_api_endpoint_subnet_public = true  # OKE API Endpoint will be public (Internet facing)
   is_lb_subnet_public           = true  # OKE LoadBalanacer will be public (Internet facing)
   is_nodepool_subnet_public     = false # OKE NodePool will be private (not-Internet facing)
-  
+
   fk_oke_addon_map = {
     CertManager = {
       configurations = {

@@ -6,11 +6,11 @@ variable "region" {}
 variable "fingerprint" {}
 
 variable "number_of_nginx_replicas" {
-   default = 10
+  default = 10
 }
 
 variable "pool_name" {
-   default = "FoggyKitchenVirtualNodePool"
+  default = "FoggyKitchenVirtualNodePool"
 }
 
 variable "virtual_nodepool_pod_shape" {

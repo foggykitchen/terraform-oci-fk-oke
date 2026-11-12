@@ -1,5 +1,5 @@
 module "fk_vcn" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.3.0" # TODO: tag not yet released
 
   compartment_ocid = var.compartment_ocid
   name             = "FoggyKitchenVCN"
@@ -358,7 +358,7 @@ module "fk_vcn" {
 
 module "fk_public_ip_lb" {
   count  = var.use_reserved_public_ip_for_lb ? 1 : 0
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-public-ip.git?ref=v1.0.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-public-ip.git?ref=v2.0.0" # TODO: tag not yet released
 
   name                         = "fk-lb-public-ip"
   compartment_ocid             = var.compartment_ocid
@@ -367,7 +367,7 @@ module "fk_public_ip_lb" {
 
 module "fk_nsg_lb" {
   count  = var.lb_nsg ? 1 : 0
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.2.0" # TODO: tag not yet released
 
   name             = "fk-lb-nsg"
   compartment_ocid = var.compartment_ocid

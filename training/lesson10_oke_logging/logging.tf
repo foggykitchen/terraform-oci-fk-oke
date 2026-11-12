@@ -1,5 +1,5 @@
 module "fk_logging" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-logging.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-logging.git?ref=v0.2.0" # TODO: tag not yet released
 
   compartment_ocid      = var.compartment_ocid
   log_group_name        = "oke_log_group"

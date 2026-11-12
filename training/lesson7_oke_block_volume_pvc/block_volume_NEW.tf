@@ -1,6 +1,6 @@
 module "fk_block_volume" {
   count  = var.pvc_from_existing_block_volume ? 1 : 0
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-blockvolume.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-blockvolume.git?ref=v0.2.0" # TODO: tag not yet released
 
   name                = var.block_volume_name
   compartment_ocid    = var.compartment_ocid

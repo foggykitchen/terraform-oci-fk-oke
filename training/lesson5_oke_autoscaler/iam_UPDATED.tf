@@ -1,5 +1,5 @@
 module "fk_policy_autoscaler_workload_identity_principal" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.2.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.homeregion
@@ -25,7 +25,7 @@ module "fk_policy_autoscaler_workload_identity_principal" {
 }
 
 module "fk_policy_autoscaler_instance_principal" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.2.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.homeregion

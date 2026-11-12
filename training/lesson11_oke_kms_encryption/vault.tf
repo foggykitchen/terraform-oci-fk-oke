@@ -1,6 +1,6 @@
 module "fk-vault" {
   providers = { oci = oci.targetregion }
-  source    = "git::https://github.com/foggykitchen/terraform-oci-fk-vault.git?ref=v0.1.0"
+  source    = "git::https://github.com/foggykitchen/terraform-oci-fk-vault.git?ref=v0.2.0" # TODO: tag not yet released
 
   name             = "fk-oke-kms-vault"
   compartment_ocid = var.compartment_ocid

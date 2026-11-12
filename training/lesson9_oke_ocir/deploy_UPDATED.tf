@@ -1,5 +1,5 @@
 module "fk_ocir" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-ocir.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-ocir.git?ref=v0.2.0" # TODO: tag not yet released
 
   compartment_ocid = var.compartment_ocid
   repository_name  = format("%s/%s", var.ocir_repo_name, var.ocir_repo_name)
